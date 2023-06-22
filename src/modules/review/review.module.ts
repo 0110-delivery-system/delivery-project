@@ -3,7 +3,7 @@ import { reviewService } from './review.service';
 import { reviewController } from './review.controller';
 
 @Module({
-  controllers: [reviewController],
-  providers: [reviewService],
+    controllers: [reviewController],
+    providers: [reviewService],
 })
 export class reviewModule {}
