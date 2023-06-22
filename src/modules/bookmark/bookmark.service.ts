@@ -12,7 +12,7 @@ export class BookmarkService {
         return `This action returns all bookmark`;
     }
 
-    findOneStore(storeId: number) {
+    findOneStoreName(storeId: number) {
         return `This action returns a #${storeId} bookmark`;
     }
 
@@ -22,5 +22,9 @@ export class BookmarkService {
 
     remove(id: number) {
         return `This action removes a #${id} bookmark`;
+    }
+
+    saveFavoriteStore(storeId: number, userId: number) {
+        return `This action save a #${userId} bookmark`;
     }
 }
