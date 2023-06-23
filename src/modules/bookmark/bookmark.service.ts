@@ -9,11 +9,7 @@ export class BookmarkService {
     }
 
     getManyFavoriteStores(userId: number) {
-        const bookmarkList = [
-            { id: 1, name: '매장1' },
-            { id: 2, name: '매장2' },
-        ];
-        return bookmarkList;
+        return 'This action adds a new bookmark';
     }
 
     findOneStoreId(storeId: number) {

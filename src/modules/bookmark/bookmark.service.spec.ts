@@ -11,7 +11,6 @@ describe('BookmarkService', () => {
         const module: TestingModule = await Test.createTestingModule({
             providers: [BookmarkService],
         }).compile();
-
         bookmarkService = module.get<BookmarkService>(BookmarkService);
     });
 
@@ -50,6 +49,12 @@ describe('BookmarkService', () => {
             const user = await authService.getUser(userId);
             await bookmarkService.removeFavoriteStore(userId, storeId);
             expect(user.bookmark).not.toContain(storeId);
+        });
+        it('즐겨찾기 된 매장이 아닐때', async () => {
+            const userId = 1;
+            const storeId = 3;
+            const favoriteStores = await bookmarkService.getManyFavoriteStores(userId);
+            expect(favoriteStores).not.toContain(storeId);
         });
     });
     describe('getManyFavoriteStore', () => {
