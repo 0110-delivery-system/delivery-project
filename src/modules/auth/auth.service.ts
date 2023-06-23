@@ -17,4 +17,14 @@ export class AuthService {
     }
     return true;
   }
+
+  validatePassword(password: string) {
+    if (password.length < 4) {
+      throw new BadRequestException('비밀번호가 형식에 맞지 않습니다');
+    }
+    if (password.length > 12) {
+      throw new BadRequestException('비밀번호가 형식에 맞지 않습니다');
+    }
+    return true;
+  }
 }

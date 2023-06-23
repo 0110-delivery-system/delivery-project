@@ -49,4 +49,63 @@ describe('AuthService', () => {
       expect(result).toEqual(true);
     });
   });
+
+  describe('validatePassword() - 비밀번호 검증', () => {
+    it('비밀번호가 4자 미만인 경우 - 실패', () => {
+      const password1 = '1';
+      const password2 = '12';
+      const password3 = '123';
+      expect(() => {
+        authService.validatePassword(password1);
+      }).toThrow('비밀번호가 형식에 맞지 않습니다');
+
+      expect(() => {
+        authService.validatePassword(password2);
+      }).toThrow('비밀번호가 형식에 맞지 않습니다');
+
+      expect(() => {
+        authService.validatePassword(password3);
+      }).toThrow('비밀번호가 형식에 맞지 않습니다');
+    });
+
+    it('비밀번호가 12자 초과일 경우 - 실패', () => {
+      const password1 = '1234567890123';
+      const password2 = '12345678901234';
+      const password3 = '123456789012345';
+
+      expect(() => {
+        authService.validatePassword(password1);
+      }).toThrow('비밀번호가 형식에 맞지 않습니다');
+
+      expect(() => {
+        authService.validatePassword(password2);
+      }).toThrow('비밀번호가 형식에 맞지 않습니다');
+
+      expect(() => {
+        authService.validatePassword(password3);
+      }).toThrow('비밀번호가 형식에 맞지 않습니다');
+    });
+  });
+
+  it('validatePassword - 성공', () => {
+    const password1 = '1234';
+    const password2 = '12345';
+    const password3 = '123456';
+    const password4 = '1234567';
+    const password5 = '12345678';
+    const password6 = '123456789';
+    const password7 = '1234567890';
+    const password8 = '12345678901';
+    const password9 = '123456789012';
+
+    expect(authService.validatePassword(password1)).toEqual(true);
+    expect(authService.validatePassword(password2)).toEqual(true);
+    expect(authService.validatePassword(password3)).toEqual(true);
+    expect(authService.validatePassword(password4)).toEqual(true);
+    expect(authService.validatePassword(password5)).toEqual(true);
+    expect(authService.validatePassword(password6)).toEqual(true);
+    expect(authService.validatePassword(password7)).toEqual(true);
+    expect(authService.validatePassword(password8)).toEqual(true);
+    expect(authService.validatePassword(password9)).toEqual(true);
+  });
 });
