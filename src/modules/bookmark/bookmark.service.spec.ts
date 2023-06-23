@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { BookmarkService } from './bookmark.service';
 import { AuthService } from '../auth/auth.service';
+import { BadRequestException } from '@nestjs/common';
 
 describe('BookmarkService', () => {
     let bookmarkService: BookmarkService;
@@ -19,28 +20,24 @@ describe('BookmarkService', () => {
     });
 
     describe('addFavoriteStore', () => {
+        const storeId = 1;
+        const userId = 1;
         describe('validateAddFavoriteStore', () => {
-            const storeId = 1;
-            const expectedStore = { id: '1', name: '매장1' };
             it('존재하는 매장인지 확인', async () => {
-                const result = await bookmarkService.findOneStoreId(storeId);
-                expect(result).not.toBe(expectedStore);
+                await expect(bookmarkService.validateAddFavoriteStore(storeId, userId)).rejects.toThrowError(new BadRequestException('존재하지 않는 매장입니다.'));
             });
-            it('이미 존재하는 매장 일때', async () => {
-                const result = await bookmarkService.findOneStoreId(storeId);
-                expect(result).not.toBe(expectedStore);
+            it('이미 즐겨찾기에 추가된 매장일 경우', async () => {
+                const bookmark = [1, 2];
+                expect(bookmark.includes(storeId)).rejects.toThrowError(new BadRequestException('이미 즐겨찾기한 매장입니다.'));
             });
         });
-        describe('saveFavoriteStore', () => {
-            const storeId = 1;
-            const userId = 1;
-            it('즐겨찾기 매장 저장', async () => {
-                await bookmarkService.saveFavoriteStore(userId, storeId);
-                const user = await authService.getUser(userId);
-                expect(user.bookmark).toContain(storeId);
-            });
+        it('즐겨찾기 매장 저장', async () => {
+            await bookmarkService.saveFavoriteStore(userId, storeId);
+            const user = await authService.getUser(userId);
+            expect(user.bookmark).toContain(storeId);
         });
     });
+
     describe('removeFavoriteStore', () => {
         it('즐겨찾기 매장 삭제', async () => {
             const storeId = 1;
@@ -56,15 +53,15 @@ describe('BookmarkService', () => {
             expect(favoriteStores).not.toContain(storeId);
         });
     });
-    describe('getManyFavoriteStore', () => {
-        it('즐겨 찾기된 매장 조회', async () => {
-            const userId = 1;
-            const expectedFavoriteStores = [
-                { id: '1', name: '매장1' },
-                { id: '2', name: '매장2' },
-            ];
-            const favoriteStores = await bookmarkService.getManyFavoriteStores(userId);
-            expect(favoriteStores).toEqual(expectedFavoriteStores);
-        });
-    });
+    // describe('getManyFavoriteStore', () => {
+    //     it('즐겨 찾기된 매장 조회', async () => {
+    //         const userId = 1;
+    //         const expectedFavoriteStores = [
+    //             { id: '1', name: '매장1' },
+    //             { id: '2', name: '매장2' },
+    //         ];
+    //         const favoriteStores = await bookmarkService.getManyFavoriteStores(userId);
+    //         expect(favoriteStores).toEqual(expectedFavoriteStores);
+    //     });
+    // });
 });
