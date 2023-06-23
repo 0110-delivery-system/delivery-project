@@ -21,15 +21,14 @@ describe('BookmarkService', () => {
     describe('addFavoriteStore', () => {
         describe('validateAddFavoriteStore', () => {
             const storeId = 1;
+            const expectedStore = { id: '1', name: '매장1' };
             it('존재하는 매장인지 확인', async () => {
-                jest.spyOn(storeRepositry, 'findOneStoreId').mockResolvedValueOnce(true);
                 const result = await bookmarkService.findOneStoreId(storeId);
-                expect(result).toBeNull();
+                expect(result).not.toBe(expectedStore);
             });
             it('이미 존재하는 매장 일때', async () => {
-                jest.spyOn(storeRepositry, 'findOneStoreId').mockResolvedValueOnce(false);
                 const result = await bookmarkService.findOneStoreId(storeId);
-                expect(result).not.toBeNull();
+                expect(result).not.toBe(expectedStore);
             });
         });
         describe('saveFavoriteStore', () => {

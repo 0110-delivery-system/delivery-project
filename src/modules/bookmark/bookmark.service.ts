@@ -8,6 +8,8 @@ export class BookmarkService {
         return 'This action adds a new bookmark';
     }
 
+    addFavoriteStore(userId: number, storeId: number) {}
+
     getManyFavoriteStores(userId: number) {
         return 'This action adds a new bookmark';
     }
