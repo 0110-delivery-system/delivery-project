@@ -7,6 +7,18 @@ export class AuthService {
     @Inject(IAuthRepository) private authRepository: IAuthRepository,
   ) {}
 
+  async signUp(email: string, password: string) {
+    const validateEmailResult = await this.validateEmail(email);
+    if (!validateEmailResult) {
+      return validateEmailResult;
+    }
+
+    const validatePasswordResult = this.validatePassword(password);
+    if (!validatePasswordResult) {
+      return validatePasswordResult;
+    }
+  }
+
   async validateEmail(email: string) {
     if (!email.includes('@')) {
       throw new BadRequestException('이메일 형식이 올바르지 않습니다');

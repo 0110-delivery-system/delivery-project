@@ -28,6 +28,34 @@ describe('AuthService', () => {
     expect(authService).toBeDefined();
   });
 
+  describe('signUp', () => {
+    it('validateEmail()이 true가 아닌 경우', async () => {
+      const email = 'testemail.com';
+      const password = '1234';
+      const email2 = 'test@email.com';
+
+      await expect(authService.signUp(email, password)).rejects.toThrowError(
+        new BadRequestException('이메일 형식이 올바르지 않습니다'),
+      );
+      await expect(authService.signUp(email2, password)).rejects.toThrowError(
+        new BadRequestException('이미 존재하는 이메일 입니다'),
+      );
+    });
+
+    it('validatePassword가 true가 아닌 경우', async () => {
+      const email = 'test1@email.com';
+      const password = '123';
+      const password2 = '1234567890123';
+
+      await expect(authService.signUp(email, password)).rejects.toThrowError(
+        new BadRequestException('비밀번호가 형식에 맞지 않습니다'),
+      );
+      await expect(authService.signUp(email, password2)).rejects.toThrowError(
+        new BadRequestException('비밀번호가 형식에 맞지 않습니다'),
+      );
+    });
+  });
+
   describe('validateEmail() - 이메일 검증', () => {
     it('이메일에 @가 들어가지 않을 경우', async () => {
       const email = 'testemail.com';
