@@ -23,8 +23,13 @@ describe('BookmarkService', () => {
         describe('validateAddFavoriteStore', () => {
             const storeId = 1;
             it('존재하는 매장인지 확인', async () => {
-                jest.spyOn(storeRepositry, 'findOneStoreName').mockResolvedValueOnce(true);
-                const result = await bookmarkService.findOneStoreName(storeId);
+                jest.spyOn(storeRepositry, 'findOneStoreId').mockResolvedValueOnce(true);
+                const result = await bookmarkService.findOneStoreId(storeId);
+                expect(result).toBeNull();
+            });
+            it('이미 존재하는 매장 일때', async () => {
+                jest.spyOn(storeRepositry, 'findOneStoreId').mockResolvedValueOnce(false);
+                const result = await bookmarkService.findOneStoreId(storeId);
                 expect(result).not.toBeNull();
             });
         });
@@ -32,10 +37,30 @@ describe('BookmarkService', () => {
             const storeId = 1;
             const userId = 1;
             it('즐겨찾기 매장 저장', async () => {
-                await bookmarkService.saveFavoriteStore(storeId, userId);
+                await bookmarkService.saveFavoriteStore(userId, storeId);
                 const user = await authService.getUser(userId);
                 expect(user.bookmark).toContain(storeId);
             });
+        });
+    });
+    describe('removeFavoriteStore', () => {
+        it('즐겨찾기 매장 삭제', async () => {
+            const storeId = 1;
+            const userId = 1;
+            const user = await authService.getUser(userId);
+            await bookmarkService.removeFavoriteStore(userId, storeId);
+            expect(user.bookmark).not.toContain(storeId);
+        });
+    });
+    describe('getManyFavoriteStore', () => {
+        it('즐겨 찾기된 매장 조회', async () => {
+            const userId = 1;
+            const expectedFavoriteStores = [
+                { id: '1', name: '매장1' },
+                { id: '2', name: '매장2' },
+            ];
+            const favoriteStores = await bookmarkService.getManyFavoriteStores(userId);
+            expect(favoriteStores).toEqual(expectedFavoriteStores);
         });
     });
 });

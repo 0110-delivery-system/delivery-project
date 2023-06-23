@@ -8,11 +8,15 @@ export class BookmarkService {
         return 'This action adds a new bookmark';
     }
 
-    findAll() {
-        return `This action returns all bookmark`;
+    getManyFavoriteStores(userId: number) {
+        const bookmarkList = [
+            { id: 1, name: '매장1' },
+            { id: 2, name: '매장2' },
+        ];
+        return bookmarkList;
     }
 
-    findOneStoreName(storeId: number) {
+    findOneStoreId(storeId: number) {
         return `This action returns a #${storeId} bookmark`;
     }
 
@@ -20,11 +24,11 @@ export class BookmarkService {
         return `This action updates a #${id} bookmark`;
     }
 
-    remove(id: number) {
-        return `This action removes a #${id} bookmark`;
+    removeFavoriteStore(userId: number, storeId: number) {
+        return `This action removes a #${userId} bookmark`;
     }
 
-    saveFavoriteStore(storeId: number, userId: number) {
+    saveFavoriteStore(userId: number, storeId: number) {
         return `This action save a #${userId} bookmark`;
     }
 }

@@ -5,30 +5,30 @@ import { UpdateBookmarkDto } from './dto/update-bookmark.dto';
 
 @Controller('bookmark')
 export class BookmarkController {
-  constructor(private readonly bookmarkService: BookmarkService) {}
+    constructor(private readonly bookmarkService: BookmarkService) {}
 
-  @Post()
-  create(@Body() createBookmarkDto: CreateBookmarkDto) {
-    return this.bookmarkService.create(createBookmarkDto);
-  }
+    @Post()
+    create(@Body() createBookmarkDto: CreateBookmarkDto) {
+        return this.bookmarkService.create(createBookmarkDto);
+    }
 
-  @Get()
-  findAll() {
-    return this.bookmarkService.findAll();
-  }
+    @Get()
+    findAll() {
+        return this.bookmarkService.findAll();
+    }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.bookmarkService.findOne(+id);
-  }
+    @Get(':id')
+    findOne(@Param('id') id: string) {
+        return this.bookmarkService.findOne(+id);
+    }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateBookmarkDto: UpdateBookmarkDto) {
-    return this.bookmarkService.update(+id, updateBookmarkDto);
-  }
+    @Patch(':id')
+    update(@Param('id') id: string, @Body() updateBookmarkDto: UpdateBookmarkDto) {
+        return this.bookmarkService.update(+id, updateBookmarkDto);
+    }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.bookmarkService.remove(+id);
-  }
+    @Delete(':id')
+    remove(@Param('id') id: string) {
+        return this.bookmarkService.remove(+id);
+    }
 }
