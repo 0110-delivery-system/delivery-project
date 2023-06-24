@@ -2,10 +2,17 @@ import { BadRequestException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { IAuthRepository } from './auth.IRepository';
 import { AuthService } from './auth.service';
+import { JwtService } from '@nestjs/jwt';
+import * as bcrypt from 'bcrypt';
 
 export class FakeAuthRepository implements IAuthRepository {
-  findUserByEmail(email: any) {
-    if (email === 'test@email.com') return { id: 1, email: 'teset@email.com' };
+  async findUserByEmail(email: any) {
+    if (email === 'test@email.com')
+      return {
+        id: 1,
+        email: 'teset@email.com',
+        password: await bcrypt.hash('1234', 10),
+      };
   }
   createUser(email: string, password: string): Promise<void> {
     return;
@@ -20,6 +27,7 @@ describe('AuthService', () => {
       providers: [
         AuthService,
         { provide: IAuthRepository, useClass: FakeAuthRepository },
+        JwtService,
       ],
     }).compile();
 
@@ -145,5 +153,37 @@ describe('AuthService', () => {
     expect(authService.validatePassword(password7)).toEqual(true);
     expect(authService.validatePassword(password8)).toEqual(true);
     expect(authService.validatePassword(password9)).toEqual(true);
+  });
+
+  describe('login', () => {
+    it('일치하는 이메일이 존재하지 경우 - 실패', async () => {
+      const email = 'test999@email.com';
+      const password = '1234';
+      await expect(authService.login(email, password)).rejects.toThrowError(
+        new BadRequestException('계정 정보가 올바르지 않습니다'),
+      );
+    });
+
+    it('이메일의 비밀번호와 입력받은 비밀번호가 일치하지 않을 경우 - 실패', async () => {
+      const email = 'test@email.com';
+      const password = '12345';
+      await expect(authService.login(email, password)).rejects.toThrowError(
+        new BadRequestException('계정 정보가 올바르지 않습니다'),
+      );
+    });
+  });
+
+  describe('jwtGenerate', () => {
+    it('access_token이 제대로 발급되는지 확인 - 성공', () => {
+      const userId = 1;
+      const result = authService.jwtGenerate(userId, 'access_token');
+      expect(result).toHaveProperty('access_token');
+    });
+
+    it('refresh_token이 제대로 발급되는지 확인 - 성공', () => {
+      const userId = 1;
+      const result = authService.jwtGenerate(userId, 'refresh_token');
+      expect(result).toHaveProperty('refresh_token');
+    });
   });
 });
