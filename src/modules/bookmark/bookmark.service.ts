@@ -1,14 +1,20 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
-import { StoreService } from '../store/store.service';
+import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { IBookmarkRepository } from './bookmark.IRepository';
+import { CreateBookmarkDto } from './dto/create-bookmark.dto';
+import { FakeStoreService } from './bookmark.service.spec';
 
 @Injectable()
 export class BookmarkService {
-    constructor(private storeService: StoreService, private bookmarkRepository: IBookmarkRepository) {}
+    constructor(@Inject(IBookmarkRepository) private bookmarkRepository: IBookmarkRepository) {}
+    storeService = new FakeStoreService();
 
-    validateAddFavoriteStore(storeId: number, userId: number) {
-        const store = this.findOneStoreId(storeId);
-        const bookmark = this.bookmarkRepository.getManyUserBookmark(userId);
+    create(createBookmarkDto: CreateBookmarkDto) {
+        return 'This action adds a new bookmark';
+    }
+
+    async validateAddFavoriteStore(storeId: number, userId: number) {
+        const store = await this.findOneStoreId(storeId);
+        const bookmark = await this.bookmarkRepository.getManyUserBookmark(userId);
         if (store === null) {
             throw new BadRequestException('존재하지 않는 매장입니다.');
         } else if (bookmark.includes(storeId)) {
@@ -40,12 +46,24 @@ export class BookmarkService {
         return store ?? null;
     }
 
-    async removeFavoriteStore(userId: number, storeId: number) {
+    async validateSavedFavoriteStore(userId: number, storeId: number) {
         const bookmark = await this.bookmarkRepository.getManyUserBookmark(userId);
         if (bookmark.includes(storeId)) {
-            await this.bookmarkRepository.saveFavoriteStore(userId, storeId);
+            return true;
         } else if (!bookmark.includes(storeId)) {
             throw new BadRequestException('즐겨찾기 된 매장이 아닙니다.');
+        }
+    }
+
+    async deleteFavoriteStore(userId: number, storeId: number) {
+        const validateResult = await this.validateSavedFavoriteStore(userId, storeId);
+        if (validateResult) {
+            const removeResult = await this.bookmarkRepository.removeFavoriteStore(userId, storeId);
+            if (removeResult) {
+                return true;
+            } else {
+                return false;
+            }
         }
     }
 }

@@ -9,4 +9,7 @@ export class BookmarkRepository implements IBookmarkRepository {
     saveFavoriteStore(userId: number, storeId: number): Promise<void> {
         return;
     }
+    removeFavoriteStore(userId: number, storeId: number) {
+        return;
+    }
 }
