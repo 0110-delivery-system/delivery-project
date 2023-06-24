@@ -55,4 +55,13 @@ export class OrderService {
         }
         return true;
     }
+
+    checkAfterThreeMonth(nowDate: Date, orderDate: Date) {
+        orderDate.setMonth(orderDate.getMonth() - 3);
+        if (nowDate <= orderDate) {
+            return false;
+        } else {
+            return true;
+        }
+    }
 }

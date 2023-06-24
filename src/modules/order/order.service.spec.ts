@@ -18,16 +18,16 @@ export class FakeOrderRepository {
 
     getOrderStatus(orderId: number) {
         if (orderId === 1) {
-            return { id: 1, food: [{ id: 1, foodName: "마라샹궈", price: 15000 }], status: "주문 확정" };
+            return { id: 1, UserId: 1, food: [{ id: 1, foodName: "마라샹궈", price: 15000 }], status: "주문 확정" };
         }
         if (orderId === 2) {
-            return { id: 1, food: [{ id: 1, foodName: "마라샹궈", price: 15000 }], status: "배달 중" };
+            return { id: 1, UserId: 1, food: [{ id: 1, foodName: "마라샹궈", price: 15000 }], status: "배달 중" };
         }
         if (orderId === 3) {
-            return { id: 1, food: [{ id: 1, foodName: "마라샹궈", price: 15000 }], status: "배달 완료" };
+            return { id: 1, UserId: 1, food: [{ id: 1, foodName: "마라샹궈", price: 15000 }], status: "배달 완료" };
         }
         if (orderId === 4) {
-            return { id: 1, food: [{ id: 1, foodName: "마라샹궈", price: 15000 }], status: "주문 접수" };
+            return { id: 1, UserId: 1, food: [{ id: 1, foodName: "마라샹궈", price: 15000 }], status: "주문 접수" };
         }
         if (orderId === 999) {
             return;
@@ -162,6 +162,38 @@ describe("OrderService", () => {
             const orderId = 4;
             const result = await orderService.cancleOrder(orderId);
             expect(result).toBeNull;
+        });
+    });
+
+    describe("checkAfterThreeMonth", () => {
+        it("3개월이 지났을 경우 - 실패", () => {
+            const nowDate = new Date("2023-01-01");
+            const createdAt1 = new Date("2023-04-02");
+            const createdAt2 = new Date("2023-04-03");
+            const createdAt3 = new Date("2023-05-01");
+
+            const result = orderService.checkAfterThreeMonth(nowDate, createdAt1);
+            const result2 = orderService.checkAfterThreeMonth(nowDate, createdAt2);
+            const result3 = orderService.checkAfterThreeMonth(nowDate, createdAt3);
+
+            expect(result).toEqual(false);
+            expect(result2).toEqual(false);
+            expect(result3).toEqual(false);
+        });
+
+        it("3개월이 지나지 않았을 경우 - 성공", () => {
+            const nowDate = new Date("2023-01-01");
+            const createdAt1 = new Date("2023-01-02");
+            const createdAt2 = new Date("2023-02-02");
+            const createdAt3 = new Date("2023-03-31");
+
+            const result = orderService.checkAfterThreeMonth(nowDate, createdAt1);
+            const result2 = orderService.checkAfterThreeMonth(nowDate, createdAt2);
+            const result3 = orderService.checkAfterThreeMonth(nowDate, createdAt3);
+
+            expect(result).toEqual(true);
+            expect(result2).toEqual(true);
+            expect(result3).toEqual(true);
         });
     });
 });
