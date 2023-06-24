@@ -27,4 +27,26 @@ export class OrderService {
         await this.orderRepository.createOrder(storeId, menuList);
         return;
     }
+
+    async cancleOrder(orderId: number) {
+        const order = await this.orderRepository.getOrderStatus(orderId);
+        if (!order) {
+            throw new BadRequestException("존재하지 않는 주문입니다");
+        }
+        if (order.status === "주문 확정") {
+            throw new BadRequestException("주문 확정된 주문은 취소할 수 없습니다");
+        }
+    }
+
+    checkOrderStatus_cancle(orderStatus: string) {
+        if (orderStatus === "주문 확정") {
+            throw new BadRequestException("주문 확정된 주문은 취소할 수 없습니다");
+        }
+        if (orderStatus === "배달 중") {
+            throw new BadRequestException("배달 중인 주문은 취소할 수 없습니다");
+        }
+        if (orderStatus === "배달 완료") {
+            throw new BadRequestException("배달이 완료된 주문은 취소할 수 없습니다");
+        }
+    }
 }
