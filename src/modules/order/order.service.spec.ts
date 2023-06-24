@@ -26,9 +26,16 @@ export class FakeOrderRepository {
         if (orderId === 3) {
             return { id: 1, food: [{ id: 1, foodName: "마라샹궈", price: 15000 }], status: "배달 완료" };
         }
+        if (orderId === 4) {
+            return { id: 1, food: [{ id: 1, foodName: "마라샹궈", price: 15000 }], status: "주문 접수" };
+        }
         if (orderId === 999) {
             return;
         }
+    }
+
+    deleteOrder(orderId: number) {
+        return;
     }
 }
 
@@ -108,30 +115,36 @@ describe("OrderService", () => {
     });
 
     describe("checkOrderStatus_cancle", () => {
-        it("주문 상태가 주문 확정일 경우 - 실패", async () => {
+        it("주문 상태가 주문 확정일 경우 - 실패", () => {
             const orderStatus = "주문 확정";
             expect(() => {
                 orderService.checkOrderStatus_cancle(orderStatus);
             }).toThrowError("주문 확정된 주문은 취소할 수 없습니다");
         });
 
-        it("배달중인 주문은 취소할 수 없습니다 - 실패", async () => {
+        it("배달중인 주문은 취소할 수 없습니다 - 실패", () => {
             const orderStatus = "배달 중";
             expect(() => {
                 orderService.checkOrderStatus_cancle(orderStatus);
             }).toThrowError("배달 중인 주문은 취소할 수 없습니다");
         });
 
-        it("배달이 완료된 주문은 취소할 수 없습니다 - 실패", async () => {
+        it("배달이 완료된 주문은 취소할 수 없습니다 - 실패", () => {
             const orderStatus = "배달 완료";
             expect(() => {
                 orderService.checkOrderStatus_cancle(orderStatus);
             }).toThrowError("배달이 완료된 주문은 취소할 수 없습니다");
         });
+
+        it("validation에 성공했을 경우", () => {
+            const orderStatus = "주문 접수";
+            const result = orderService.checkOrderStatus_cancle(orderStatus);
+            expect(result).toEqual(true);
+        });
     });
 
     describe("cancleOrder()", () => {
-        it("주문 상태가 주문 접수 완료 상태가 아닐 때 - 실패", async () => {
+        it("주문 상태가 주문 접수 상태가 아닐 때 - 실패", async () => {
             const orderId_receive = 1;
             const orderId_on_delivery = 2;
             const orderId3_complete = 3;
@@ -146,8 +159,9 @@ describe("OrderService", () => {
         });
 
         it("주문이 정상적으로 취소되었을 경우 - 성공", async () => {
-            const orderId = 2;
-            // await expect();
+            const orderId = 4;
+            const result = await orderService.cancleOrder(orderId);
+            expect(result).toBeNull;
         });
     });
 });

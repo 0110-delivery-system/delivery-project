@@ -33,9 +33,14 @@ export class OrderService {
         if (!order) {
             throw new BadRequestException("존재하지 않는 주문입니다");
         }
-        if (order.status === "주문 확정") {
-            throw new BadRequestException("주문 확정된 주문은 취소할 수 없습니다");
+
+        const validationOrderStatus = this.checkOrderStatus_cancle(order.status);
+        if (!validationOrderStatus) {
+            return validationOrderStatus;
         }
+
+        await this.orderRepository.deleteOrder(orderId);
+        return;
     }
 
     checkOrderStatus_cancle(orderStatus: string) {
@@ -48,5 +53,6 @@ export class OrderService {
         if (orderStatus === "배달 완료") {
             throw new BadRequestException("배달이 완료된 주문은 취소할 수 없습니다");
         }
+        return true;
     }
 }
