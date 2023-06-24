@@ -57,6 +57,10 @@ export class AuthService {
     if (!checkPassword) {
       throw new BadRequestException('계정 정보가 올바르지 않습니다');
     }
+
+    const access_token = this.jwtGenerate(user.id, 'access_token');
+    const refresh_token = this.jwtGenerate(user.id, 'refresh_token');
+    return { access_token, refresh_token };
   }
 
   jwtGenerate(userId: number, type: string) {
@@ -71,7 +75,7 @@ export class AuthService {
         { userId },
         { secret: jwtSecretKey, expiresIn: jwtExpireTime },
       );
-      return { access_token };
+      return access_token;
     }
 
     if (type === 'refresh_token') {
@@ -82,7 +86,7 @@ export class AuthService {
         { userId },
         { secret: jwtSecretKey, expiresIn: jwtExpireTime },
       );
-      return { refresh_token };
+      return refresh_token;
     }
   }
 }

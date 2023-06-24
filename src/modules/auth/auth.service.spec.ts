@@ -171,19 +171,27 @@ describe('AuthService', () => {
         new BadRequestException('계정 정보가 올바르지 않습니다'),
       );
     });
+
+    it('성공적으로 로그인을 했을 경우 (access_token과 refresh_token을 받아야 한다) - 성공', async () => {
+      const email = 'test@email.com';
+      const password = '1234';
+      const result = await authService.login(email, password);
+      expect(result).toHaveProperty('access_token');
+      expect(result).toHaveProperty('refresh_token');
+    });
   });
 
   describe('jwtGenerate', () => {
     it('access_token이 제대로 발급되는지 확인 - 성공', () => {
       const userId = 1;
       const result = authService.jwtGenerate(userId, 'access_token');
-      expect(result).toHaveProperty('access_token');
+      expect(typeof result).toEqual('string');
     });
 
     it('refresh_token이 제대로 발급되는지 확인 - 성공', () => {
       const userId = 1;
       const result = authService.jwtGenerate(userId, 'refresh_token');
-      expect(result).toHaveProperty('refresh_token');
+      expect(typeof result).toEqual('string');
     });
   });
 });
