@@ -1,5 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { OwnerService } from './owner.service';
+import { CreateOwnerDto } from './dto/create-owner.dto';
 
 describe('OwnerService', () => {
   let service: OwnerService;
@@ -14,5 +15,9 @@ describe('OwnerService', () => {
 
   it('should be defined', () => {
     expect(service).toBeDefined();
+  });
+  it('생성하기', () => {
+    const input: CreateOwnerDto = {};
+    expect(service.create(input)).toBe('This action adds a new owner');
   });
 });
