@@ -13,19 +13,8 @@ import { reviewModule } from './modules/review/review.module';
 import { StoreModule } from './modules/store/store.module';
 
 @Module({
-  imports: [
-    PaymentModule,
-    AuthModule,
-    BookmarkModule,
-    DeliveryModule,
-    MenuModule,
-    NotificationModule,
-    OrderModule,
-    OwnerModule,
-    reviewModule,
-    StoreModule,
-  ],
-  controllers: [AppController],
-  providers: [AppService],
+    imports: [PaymentModule, AuthModule, BookmarkModule, DeliveryModule, MenuModule, NotificationModule, OrderModule, OwnerModule, reviewModule, StoreModule],
+    controllers: [AppController],
+    providers: [AppService],
 })
 export class AppModule {}
