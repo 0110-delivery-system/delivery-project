@@ -17,6 +17,9 @@ export class AuthService {
     if (!validatePasswordResult) {
       return validatePasswordResult;
     }
+
+    await this.authRepository.createUser(email, password);
+    return;
   }
 
   async validateEmail(email: string) {

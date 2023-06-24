@@ -1,12 +1,14 @@
-import { BadGatewayException, BadRequestException } from '@nestjs/common';
+import { BadRequestException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { IAuthRepository } from './auth.IRepository';
-import { AuthRepository } from './auth.repository';
 import { AuthService } from './auth.service';
 
 export class FakeAuthRepository implements IAuthRepository {
   findUserByEmail(email: any) {
     if (email === 'test@email.com') return { id: 1, email: 'teset@email.com' };
+  }
+  createUser(email: string, password: string): Promise<void> {
+    return;
   }
 }
 
@@ -29,7 +31,7 @@ describe('AuthService', () => {
   });
 
   describe('signUp', () => {
-    it('validateEmail()이 true가 아닌 경우', async () => {
+    it('validateEmail()이 true가 아닌 경우 - 실패', async () => {
       const email = 'testemail.com';
       const password = '1234';
       const email2 = 'test@email.com';
@@ -42,7 +44,7 @@ describe('AuthService', () => {
       );
     });
 
-    it('validatePassword가 true가 아닌 경우', async () => {
+    it('validatePassword가 true가 아닌 경우 - 실패', async () => {
       const email = 'test1@email.com';
       const password = '123';
       const password2 = '1234567890123';
@@ -53,6 +55,14 @@ describe('AuthService', () => {
       await expect(authService.signUp(email, password2)).rejects.toThrowError(
         new BadRequestException('비밀번호가 형식에 맞지 않습니다'),
       );
+    });
+
+    it('검증을 전부 통과하였을 경우 - 성공', async () => {
+      const email = 'test1@email.com';
+      const password = '1234';
+
+      const result = await authService.signUp(email, password);
+      expect(result).toEqual(undefined);
     });
   });
 
