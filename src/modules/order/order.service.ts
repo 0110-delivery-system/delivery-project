@@ -92,5 +92,14 @@ export class OrderService {
         if (order.status !== "배달 완료") {
             throw new BadRequestException("배달이 완료된 주문이 아닙니다");
         }
+        return true;
+    }
+
+    async confirmOrder(orderId: number) {
+        const order = await this.orderRepository.getOrderByOrderId(orderId);
+        if (order.status !== "주문 접수") {
+            throw new BadRequestException("주문 접수 상태가 아닙니다");
+        }
+        return true;
     }
 }

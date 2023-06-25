@@ -60,6 +60,9 @@ export class FakeOrderRepository {
         if (orderId === 4) {
             return { id: 4, UserId: 1, food: [{ id: 1, foodName: "마라샹궈", price: 15000 }], status: "주문 확정", review: "" };
         }
+        if (orderId === 5) {
+            return { id: 5, UserId: 1, food: [{ id: 1, foodName: "마라샹궈", price: 15000 }], status: "배달 완료", review: "" };
+        }
     }
 }
 
@@ -257,6 +260,35 @@ describe("OrderService", () => {
         it("주문 확정 상태일 경우 - 실패", async () => {
             const orderId = 4;
             await expect(orderService.checkReviewAvailability(orderId)).rejects.toThrowError("배달이 완료된 주문이 아닙니다");
+        });
+
+        it("성공적으로 체크했을 경우 - 성공", async () => {
+            const orderId = 5;
+            const result = await orderService.checkReviewAvailability(orderId);
+            expect(result).toEqual(true);
+        });
+    });
+
+    describe("confirmOrder()", () => {
+        it("주문 확정 상태일 경우 - 실패", async () => {
+            const orderId = 4;
+            await expect(orderService.confirmOrder(orderId)).rejects.toThrowError(new BadRequestException("주문 접수 상태가 아닙니다"));
+        });
+
+        it("배달 중인 경우 - 실패", async () => {
+            const orderId = 3;
+            await expect(orderService.confirmOrder(orderId)).rejects.toThrowError(new BadRequestException("주문 접수 상태가 아닙니다"));
+        });
+
+        it("배달이 완료된 경우 - 실패", async () => {
+            const orderId = 5;
+            await expect(orderService.confirmOrder(orderId)).rejects.toThrowError(new BadRequestException("주문 접수 상태가 아닙니다"));
+        });
+
+        it("성공적으로 확정이 된 경우 - 성공", async () => {
+            const orderId = 2;
+            const result = await orderService.confirmOrder(orderId);
+            expect(result).toEqual(true);
         });
     });
 });
