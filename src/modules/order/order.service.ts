@@ -83,4 +83,14 @@ export class OrderService {
             return true;
         }
     }
+
+    async checkReviewAvailability(orderId: number) {
+        const order = await this.orderRepository.getOrderByOrderId(orderId);
+        if (order.review) {
+            throw new BadRequestException("이미 리뷰를 작성한 주문입니다");
+        }
+        if (order.status !== "배달 완료") {
+            throw new BadRequestException("배달이 완료된 주문이 아닙니다");
+        }
+    }
 }

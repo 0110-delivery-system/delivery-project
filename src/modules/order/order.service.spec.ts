@@ -46,6 +46,21 @@ export class FakeOrderRepository {
     deleteOrder(orderId: number) {
         return;
     }
+
+    getOrderByOrderId(orderId: number) {
+        if (orderId === 1) {
+            return { id: 1, UserId: 1, food: [{ id: 1, foodName: "마라샹궈", price: 15000 }], status: "배달 완료", review: "맛있다맛있어" };
+        }
+        if (orderId === 2) {
+            return { id: 2, UserId: 1, food: [{ id: 1, foodName: "마라샹궈", price: 15000 }], status: "주문 접수", review: "" };
+        }
+        if (orderId === 3) {
+            return { id: 3, UserId: 1, food: [{ id: 1, foodName: "마라샹궈", price: 15000 }], status: "배달 중", review: "" };
+        }
+        if (orderId === 4) {
+            return { id: 4, UserId: 1, food: [{ id: 1, foodName: "마라샹궈", price: 15000 }], status: "주문 확정", review: "" };
+        }
+    }
 }
 
 describe("OrderService", () => {
@@ -220,6 +235,28 @@ describe("OrderService", () => {
             const nowDate = new Date();
             const result = await orderService.createNowDate();
             expect(result).toEqual(nowDate);
+        });
+    });
+
+    describe("checkReviewAvailability", () => {
+        it("하나의 주문에 두 개 이상의 리뷰를 작성할 경우 - 실패", async () => {
+            const orderId = 1;
+            await expect(orderService.checkReviewAvailability(orderId)).rejects.toThrowError(new BadRequestException("이미 리뷰를 작성한 주문입니다"));
+        });
+
+        it("주문 접수 상태일 경우 - 실패", async () => {
+            const orderId = 2;
+            await expect(orderService.checkReviewAvailability(orderId)).rejects.toThrowError("배달이 완료된 주문이 아닙니다");
+        });
+
+        it("배달 중인 경우 - 실패", async () => {
+            const orderId = 3;
+            await expect(orderService.checkReviewAvailability(orderId)).rejects.toThrowError("배달이 완료된 주문이 아닙니다");
+        });
+
+        it("주문 확정 상태일 경우 - 실패", async () => {
+            const orderId = 4;
+            await expect(orderService.checkReviewAvailability(orderId)).rejects.toThrowError("배달이 완료된 주문이 아닙니다");
         });
     });
 });
