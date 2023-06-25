@@ -291,4 +291,17 @@ describe("OrderService", () => {
             expect(result).toEqual(true);
         });
     });
+
+    describe("checkIsOrder()", () => {
+        it("존재하지 않는 주문일 경우 - 실패", async () => {
+            const orderId = 999;
+            await expect(orderService.checkIsOrder(orderId)).rejects.toThrowError(new BadRequestException("존재하지 않는 주문입니다"));
+        });
+
+        it("존재하는 주문일 경우 - 성공", async () => {
+            const orderId = 1;
+            const result = await orderService.checkIsOrder(orderId);
+            expect(result).toEqual(true);
+        });
+    });
 });
