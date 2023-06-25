@@ -34,6 +34,15 @@ export class FakeOrderRepository {
         }
     }
 
+    getOrderByUserId(userId: number) {
+        if (userId === 1) {
+            return [
+                { id: 1, UserId: 1, food: [{ id: 1, foodName: "마라샹궈", price: 15000 }], status: "주문 확정", createdAt: new Date("2023-01-02") },
+                { id: 2, UserId: 1, food: [{ id: 1, foodName: "마라샹궈", price: 15000 }], status: "배달 중", createdAt: new Date("2023-04-02") },
+            ];
+        }
+    }
+
     deleteOrder(orderId: number) {
         return;
     }
@@ -167,9 +176,9 @@ describe("OrderService", () => {
 
     describe("checkAfterThreeMonth", () => {
         it("3개월이 지났을 경우 - 실패", () => {
-            const nowDate = new Date("2023-01-01");
-            const createdAt1 = new Date("2023-04-02");
-            const createdAt2 = new Date("2023-04-03");
+            const nowDate = new Date("2023-10-01");
+            const createdAt1 = new Date("2023-05-02");
+            const createdAt2 = new Date("2023-04-05");
             const createdAt3 = new Date("2023-05-01");
 
             const result = orderService.checkAfterThreeMonth(nowDate, createdAt1);
@@ -194,6 +203,23 @@ describe("OrderService", () => {
             expect(result).toEqual(true);
             expect(result2).toEqual(true);
             expect(result3).toEqual(true);
+        });
+    });
+
+    describe("getManyOrderHistory()", () => {
+        it("3개월이 지나지 않은 주문정보만 가져오는지 - 성공", async () => {
+            const nowDate = new Date("2023-05-01");
+            const userId = 1;
+            const result = await orderService.getManyOrderHistory(nowDate, userId);
+            expect(result).toEqual([{ id: 2, UserId: 1, food: [{ id: 1, foodName: "마라샹궈", price: 15000 }], status: "배달 중", createdAt: new Date("2023-04-02") }]);
+        });
+    });
+
+    describe("createNowDate()", () => {
+        it("성공적으로 현재 날짜가 생성되었을 경우 - 성공", async () => {
+            const nowDate = new Date();
+            const result = await orderService.createNowDate();
+            expect(result).toEqual(nowDate);
         });
     });
 });

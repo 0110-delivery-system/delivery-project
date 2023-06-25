@@ -56,11 +56,30 @@ export class OrderService {
         return true;
     }
 
+    createNowDate() {
+        return new Date();
+    }
+
+    async getManyOrderHistory(nowDate: Date, userId: number) {
+        const orderList = await this.orderRepository.getOrderByUserId(userId);
+
+        let confirmOrderList = [];
+        for (let i = 0; i < orderList.length; i++) {
+            const result = this.checkAfterThreeMonth(nowDate, orderList[i].createdAt);
+            if (result === true) {
+                confirmOrderList.push(orderList[i]);
+            }
+        }
+        return confirmOrderList;
+    }
+
     checkAfterThreeMonth(nowDate: Date, orderDate: Date) {
-        orderDate.setMonth(orderDate.getMonth() - 3);
-        if (nowDate <= orderDate) {
+        const copyNowDate = new Date(nowDate);
+        copyNowDate.setMonth(copyNowDate.getMonth() - 3);
+
+        if (orderDate <= copyNowDate) {
             return false;
-        } else {
+        } else if (orderDate >= copyNowDate) {
             return true;
         }
     }
