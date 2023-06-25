@@ -1,15 +1,9 @@
-import { Controller, Get, Post, Body, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Param, Delete } from '@nestjs/common';
 import { BookmarkService } from './bookmark.service';
-import { CreateBookmarkDto } from './dto/create-bookmark.dto';
 
 @Controller('bookmark')
 export class BookmarkController {
     constructor(private readonly bookmarkService: BookmarkService) {}
-
-    @Post()
-    create(@Body() createBookmarkDto: CreateBookmarkDto) {
-        return this.bookmarkService.create(createBookmarkDto);
-    }
 
     @Post(':userId/stores/:storeId')
     async addFavoriteStore(@Param('userId') userId: number, @Param('storeId') storeId: number): Promise<boolean> {
