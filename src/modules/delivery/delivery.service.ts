@@ -7,32 +7,33 @@ import { IDeliveryRepository } from './delivery.IDeliveryRepository';
 export class DeliveryService {
     constructor(@Inject(IDeliveryRepository) private deliveryRepository: IDeliveryRepository) {}
 
-    async validateCreteDelivery(orderId: number, createDeliveryDto: any) {
-        if (!createDeliveryDto.deliveryAddress) {
+    async validateCreateDelivery(deliveryInfo: { deliveryAddress: string; receiver: string }) {
+        if (!deliveryInfo.deliveryAddress) {
             throw new BadRequestException('배달 주소지가 없습니다.');
         }
-        if (!createDeliveryDto.receiver) {
+        if (!deliveryInfo.receiver) {
             throw new BadRequestException('수령인이 없습니다.');
         }
         return true;
     }
 
-    async createDelivery(orderId: number, createDeliveryDto: any) {
-        const validateResult = await this.validateCreteDelivery(orderId, createDeliveryDto);
+    async createDelivery(orderId: number, deliveryInfo: any) {
+        const validateResult = await this.validateCreateDelivery(deliveryInfo);
         if (validateResult) {
-            const result = await this.deliveryRepository.saveDeliveryInfo(orderId, createDeliveryDto);
+            const result = await this.deliveryRepository.saveDeliveryInfo(orderId, deliveryInfo);
             return result;
         }
     }
 
     async validateStartDelivery(deliveryId: number) {
         const result = await this.deliveryRepository.findOneDeliveryStatus(deliveryId);
-        if (result.status === 'WAIT_DELIVERY') {
-            return true;
-        }
         if (result.status === 'START_DELIVERY') {
             throw new BadRequestException('이미 배달이 출발했습니다.');
         }
+        if (result.status === 'COMPLETE_DELIVERY') {
+            throw new BadRequestException('이미 배달이 완료되었습니다.');
+        }
+        return true;
     }
 
     async startDelivery(deliveryId: number) {
@@ -47,12 +48,13 @@ export class DeliveryService {
 
     async validateCompleteDelivery(deliveryId: number) {
         const result = await this.deliveryRepository.findOneDeliveryStatus(deliveryId);
-        if (result.status === 'START_DELIVERY') {
-            return true;
+        if (result.status === 'WAIT_DELIVERY') {
+            throw new BadRequestException('아직 배달이 출발하지 않았습니다.');
         }
         if (result.status === 'COMPLETE_DELIVERY') {
             throw new BadRequestException('이미 배달이 완료되었습니다.');
         }
+        return true;
     }
 
     async completeDelivery(deliveryId: number) {
