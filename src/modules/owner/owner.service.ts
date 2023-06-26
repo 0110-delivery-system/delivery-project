@@ -1,26 +1,33 @@
-import { Injectable } from '@nestjs/common';
-import { CreateOwnerDto } from './dto/create-owner.dto';
-import { UpdateOwnerDto } from './dto/update-owner.dto';
+import { BadRequestException, Inject, Injectable } from '@nestjs/common';
+import { IOwnerRepository } from './owner.IRepository';
+import { isEmailValid, isNameValid, isPasswordValid } from './owner.helper';
 
 @Injectable()
 export class OwnerService {
-  create(createOwnerDto: CreateOwnerDto) {
-    return 'This action adds a new owner';
-  }
+    constructor(@Inject(IOwnerRepository) private readonly ownerRepository: IOwnerRepository) {}
+    async getUserByEmail(email: string, withPassword?: boolean): Promise<any> {
+        if (!isEmailValid(email)) throw new BadRequestException('이메일 형식이 올바르지 않습니다.');
 
-  findAll() {
-    return `This action returns all owner`;
-  }
+        const foundOwner = await this.ownerRepository.findOneByEmail(email);
 
-  findOne(id: number) {
-    return `This action returns a #${id} owner`;
-  }
+        if (!foundOwner) return foundOwner;
 
-  update(id: number, updateOwnerDto: UpdateOwnerDto) {
-    return `This action updates a #${id} owner`;
-  }
+        if (withPassword) return foundOwner;
+        else {
+            const { password, ...userInfo } = foundOwner;
+            return userInfo;
+        }
+    }
 
-  remove(id: number) {
-    return `This action removes a #${id} owner`;
-  }
+    async createOwner(email: string, password: string, name: string) {
+        if (!isEmailValid(email)) throw new BadRequestException('이메일 형식이 올바르지 않습니다.');
+        if (!isPasswordValid(password)) throw new BadRequestException('패스워드는 4~12자여야 합니다.');
+        if (!isNameValid(name)) throw new BadRequestException('이름은 4글자 이하 한글만 사용 가능합니다.');
+
+        const existingOwner = await this.getUserByEmail(email, false);
+
+        if (existingOwner) throw new BadRequestException('이미 등록된 이메일입니다.');
+
+        await this.ownerRepository.createOwner(email, password, name);
+    }
 }
