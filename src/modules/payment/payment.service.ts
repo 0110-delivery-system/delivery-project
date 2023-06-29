@@ -4,12 +4,18 @@ import { UpdatePaymentDto } from './dto/update-payment.dto';
 
 @Injectable()
 export class PaymentService {
-    create(createPaymentDto: CreatePaymentDto) {
-        return 'This action adds a new payment';
+    async processPayment(orderId, amount, paymentMethod, cardNumber, expiryDate, cvv) {
+        const success = {
+            success: true,
+            message: '결제가 성공했습니다.',
+            paymentId: '12jqmwe11',
+        };
+        return success;
     }
 
-    findAll() {
-        return `This action returns all payment`;
+    async createPaymentInfo(orderId, amount, paymentMethod, cardNumber, expiryDate, cvv) {
+        const saveInfo = { orderId, amount, paymentMethod, cardNumber, expiryDate, cvv };
+        return saveInfo;
     }
 
     findOne(id: number) {
