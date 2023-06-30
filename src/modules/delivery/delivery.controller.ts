@@ -1,34 +1,37 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Post, Param, Body, Get } from '@nestjs/common';
 import { DeliveryService } from './delivery.service';
-import { CreateDeliveryDto } from './dto/create-delivery.dto';
-import { UpdateDeliveryDto } from './dto/update-delivery.dto';
 
-@Controller('delivery')
+@Controller('deliveries')
 export class DeliveryController {
     constructor(private readonly deliveryService: DeliveryService) {}
 
-    @Post()
-    create(@Body() createDeliveryDto: CreateDeliveryDto) {
-        return this.deliveryService.create(createDeliveryDto);
+    @Post(':orderId')
+    async createDelivery(@Param('orderId') orderId: number, @Body() deliveryInfo: any) {
+        const createdDelivery = await this.deliveryService.createDelivery(orderId, deliveryInfo);
+        return createdDelivery;
     }
 
-    @Get()
-    findAll() {
-        return this.deliveryService.findAll();
+    @Post(':deliveryId/start')
+    async startDelivery(@Param('deliveryId') deliveryId: number) {
+        const startedDelivery = await this.deliveryService.startDelivery(deliveryId);
+        return startedDelivery;
     }
 
-    @Get(':id')
-    findOne(@Param('id') id: string) {
-        return this.deliveryService.findOne(+id);
+    @Post(':deliveryId/complete')
+    async completeDelivery(@Param('deliveryId') deliveryId: number) {
+        const completedDelivery = await this.deliveryService.completeDelivery(deliveryId);
+        return completedDelivery;
     }
 
-    @Patch(':id')
-    update(@Param('id') id: string, @Body() updateDeliveryDto: UpdateDeliveryDto) {
-        return this.deliveryService.update(+id, updateDeliveryDto);
+    @Get(':deliveryId/status')
+    async getDeliveryStatus(@Param('deliveryId') deliveryId: number) {
+        const deliveryStatus = await this.deliveryService.getDeliveryStatus(deliveryId);
+        return deliveryStatus;
     }
 
-    @Delete(':id')
-    remove(@Param('id') id: string) {
-        return this.deliveryService.remove(+id);
+    @Get(':deliveryId/info')
+    async getDeliveryInfo(@Param('deliveryId') deliveryId: number) {
+        const deliveryInfo = await this.deliveryService.getDeliveryInfo(deliveryId);
+        return deliveryInfo;
     }
 }
