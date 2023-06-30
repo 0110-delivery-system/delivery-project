@@ -11,9 +11,10 @@ import { OrderModule } from './modules/order/order.module';
 import { OwnerModule } from './modules/owner/owner.module';
 import { reviewModule } from './modules/review/review.module';
 import { StoreModule } from './modules/store/store.module';
+import { DatabaseModule } from './database/database.module';
 
 @Module({
-    imports: [PaymentModule, AuthModule, BookmarkModule, DeliveryModule, MenuModule, NotificationModule, OrderModule, OwnerModule, reviewModule, StoreModule],
+    imports: [DatabaseModule, PaymentModule, AuthModule, BookmarkModule, DeliveryModule, MenuModule, NotificationModule, OrderModule, OwnerModule, reviewModule, StoreModule],
     controllers: [AppController],
     providers: [AppService],
 })
