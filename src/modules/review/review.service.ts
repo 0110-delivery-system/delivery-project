@@ -1,21 +1,21 @@
 import { IReviewRepository } from './review.IRepository';
 import { Inject, Injectable, BadRequestException } from '@nestjs/common';
 import { UpdatereviewDto } from './dto/update-review.dto';
-import { FakeAuthService, FakeOrderService } from './review.service.spec';
+import { FakeAuthService, FakeDeliveryService } from './review.service.spec';
 @Injectable()
 export class ReviewService {
     constructor(@Inject(IReviewRepository) private reviewRepository: IReviewRepository) {}
     authService = new FakeAuthService();
-    orderService = new FakeOrderService();
+    orderService = new FakeDeliveryService();
 
     async createReview(orderId: number, userId: number, review: any) {
         const createResult = this.reviewRepository.saveReview(orderId, userId, review);
         return createResult;
     }
 
-    async validateReview(userId: number, orderId: number, review: any) {
+    async validateReview(userId: number, deliveryId: number, review: any) {
         const user = await this.authService.getUser(userId);
-        const order = await this.orderService.getOrder(orderId);
+        const order = await this.orderService.getOrder(deliveryId);
 
         if (user === null) {
             throw new BadRequestException('존재하지 않는 유저입니다.');
@@ -35,8 +35,8 @@ export class ReviewService {
         if (!review.content) {
             throw new BadRequestException('리뷰의 내용을 입력해주세요.');
         }
-        if (order.status !== '배달완료') {
-            throw new BadRequestException('배달완료된 주문만 리뷰를 작성할 수 있습니다.');
+        if (order.status !== '"COMPLETE_DELIVERY"') {
+            throw new BadRequestException('"COMPLETE_DELIVERY"된 주문만 리뷰를 작성할 수 있습니다.');
         }
 
         const addHours = (date, hours) => {
@@ -49,7 +49,7 @@ export class ReviewService {
         const oneHourAfterDelivery = addHours(order.time, 1);
         const twentyFourHoursAfterDelivery = addHours(order.time, 24);
         if (oneHourAfterDelivery > currentTime) {
-            throw new BadRequestException('배달완료 후 1시간 이후에 리뷰를 작성할 수 있습니다.');
+            throw new BadRequestException('"COMPLETE_DELIVERY" 후 1시간 이후에 리뷰를 작성할 수 있습니다.');
         }
 
         if (twentyFourHoursAfterDelivery < currentTime) {

@@ -46,20 +46,20 @@ const oneHourBefore = subtractHours(currentDate, 1);
 const twentyFourHoursAfter = subtractDays(currentDate, 1);
 const fiveMinutesAfter = addMinutes(currentDate, 5);
 
-export class FakeOrderService {
-    getOrder(orderId: number) {
-        if (orderId === 1) {
+export class FakeDeliveryService {
+    getOrder(deliveryId: number) {
+        if (deliveryId === 1) {
             return null;
-        } else if (orderId === 2) {
-            return { id: 2, userId: 2, name: 'test', status: '배달완료', time: oneHourBefore };
-        } else if (orderId === 3) {
-            return { id: 3, userId: 3, name: 'test', review: { title: '맛있어요', content: '맛있어요' }, status: '배달완료', time: oneHourAfter };
-        } else if (orderId === 4) {
-            return { id: 4, userId: 3, name: 'test', status: '배달중', time: oneHourAfter };
-        } else if (orderId === 5) {
-            return { id: 5, userId: 2, name: 'test', status: '배달완료', time: fiveMinutesAfter };
-        } else if (orderId === 6) {
-            return { id: 6, userId: 2, name: 'test', status: '배달완료', time: twentyFourHoursAfter };
+        } else if (deliveryId === 2) {
+            return { id: 2, userId: 2, name: 'test', status: '"COMPLETE_DELIVERY"', time: oneHourBefore };
+        } else if (deliveryId === 3) {
+            return { id: 3, userId: 3, name: 'test', review: { title: '맛있어요', content: '맛있어요' }, status: '"COMPLETE_DELIVERY"', time: oneHourAfter };
+        } else if (deliveryId === 4) {
+            return { id: 4, userId: 3, name: 'test', status: '"START_DELIVERY"', time: oneHourAfter };
+        } else if (deliveryId === 5) {
+            return { id: 5, userId: 2, name: 'test', status: '"COMPLETE_DELIVERY"', time: fiveMinutesAfter };
+        } else if (deliveryId === 6) {
+            return { id: 6, userId: 2, name: 'test', status: '"COMPLETE_DELIVERY"', time: twentyFourHoursAfter };
         }
     }
 }
@@ -89,7 +89,7 @@ describe('reviewService', () => {
             providers: [
                 ReviewService,
                 { provide: FakeAuthService, useClass: FakeAuthService },
-                { provide: FakeOrderService, useClass: FakeOrderService },
+                { provide: FakeDeliveryService, useClass: FakeDeliveryService },
                 {
                     provide: IReviewRepository,
                     useClass: FakeReviewRepository,
@@ -211,17 +211,19 @@ describe('reviewService', () => {
             await expect(reviewService.validateReview(userId, orderId, review)).rejects.toThrowError(new BadRequestException('리뷰의 내용을 입력해주세요.'));
         });
 
-        it('스테이터스가 배달완료가 아닐 때 - 실패', async () => {
+        it('스테이터스가 "COMPLETE_DELIVERY"가 아닐 때 - 실패', async () => {
             const userId = 3;
             const orderId = 4;
             const review = {
                 title: '맛있어요',
                 content: '맛있어요',
             };
-            await expect(reviewService.validateReview(userId, orderId, review)).rejects.toThrowError(new BadRequestException('배달완료된 주문만 리뷰를 작성할 수 있습니다.'));
+            await expect(reviewService.validateReview(userId, orderId, review)).rejects.toThrowError(
+                new BadRequestException('"COMPLETE_DELIVERY"된 주문만 리뷰를 작성할 수 있습니다.')
+            );
         });
 
-        it('배달완료 후 1시간이 지나지 않았을 때 - 실패', async () => {
+        it('"COMPLETE_DELIVERY" 후 1시간이 지나지 않았을 때 - 실패', async () => {
             const userId = 2;
             const orderId = 5;
             const review = {
@@ -235,7 +237,7 @@ describe('reviewService', () => {
             jest.setSystemTime(oneHourAfterDelivery);
 
             await expect(reviewService.validateReview(userId, orderId, review)).rejects.toThrowError(
-                new BadRequestException('배달완료 후 1시간 이후에 리뷰를 작성할 수 있습니다.')
+                new BadRequestException('"COMPLETE_DELIVERY" 후 1시간 이후에 리뷰를 작성할 수 있습니다.')
             );
         });
 
