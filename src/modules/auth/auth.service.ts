@@ -1,26 +1,92 @@
-import { Injectable } from '@nestjs/common';
-import { CreateAuthDto } from './dto/create-auth.dto';
-import { UpdateAuthDto } from './dto/update-auth.dto';
+import { BadRequestException, Inject, Injectable } from '@nestjs/common';
+import { IAuthRepository } from './auth.IRepository';
+import { JwtService } from '@nestjs/jwt';
+import * as bcrypt from 'bcrypt';
+import { FakeAuthRepository } from './auth.service.spec';
 
 @Injectable()
 export class AuthService {
-    create(createAuthDto: CreateAuthDto) {
-        return 'This action adds a new auth';
+  constructor(
+    private jwtService: JwtService,
+    @Inject(IAuthRepository) private authRepository: FakeAuthRepository,
+  ) {}
+
+  async signUp(email: string, password: string) {
+    const validateEmailResult = await this.validateEmail(email);
+    if (!validateEmailResult) {
+      return validateEmailResult;
+    }
+    const validatePasswordResult = this.validatePassword(password);
+    if (!validatePasswordResult) {
+      return validatePasswordResult;
+    }
+    const hashedPassword = await bcrypt.hash(password, 10);
+    await this.authRepository.createUser(email, hashedPassword);
+    return;
+  }
+
+  async validateEmail(email: string) {
+    if (!email.includes('@')) {
+      throw new BadRequestException('이메일 형식이 올바르지 않습니다');
     }
 
-    findAll() {
-        return `This action returns all auth`;
+    const user = await this.authRepository.findUserByEmail(email);
+    if (user) {
+      throw new BadRequestException('이미 존재하는 이메일 입니다');
+    }
+    return true;
+  }
+
+  validatePassword(password: string) {
+    if (password.length < 4) {
+      throw new BadRequestException('비밀번호가 형식에 맞지 않습니다');
+    }
+    if (password.length > 12) {
+      throw new BadRequestException('비밀번호가 형식에 맞지 않습니다');
+    }
+    return true;
+  }
+
+  async login(email: string, password: string) {
+    const user = await this.authRepository.findUserByEmail(email);
+    if (!user) {
+      throw new BadRequestException('계정 정보가 올바르지 않습니다');
     }
 
-    findOne(id: number) {
-        return `This action returns a #${id} auth`;
+    const checkPassword = await bcrypt.compare(password, user.password);
+    if (!checkPassword) {
+      throw new BadRequestException('계정 정보가 올바르지 않습니다');
     }
 
-    update(id: number, updateAuthDto: UpdateAuthDto) {
-        return `This action updates a #${id} auth`;
+    const access_token = this.jwtGenerate(user.id, 'access_token');
+    const refresh_token = this.jwtGenerate(user.id, 'refresh_token');
+    return { access_token, refresh_token };
+  }
+
+  jwtGenerate(userId: number, type: string) {
+    let jwtExpireTime: string;
+    let jwtSecretKey: string;
+
+    if (type === 'access_token') {
+      jwtSecretKey = 'access_key';
+      jwtExpireTime = '3600s';
+
+      const access_token = this.jwtService.sign(
+        { userId },
+        { secret: jwtSecretKey, expiresIn: jwtExpireTime },
+      );
+      return access_token;
     }
 
-    remove(id: number) {
-        return `This action removes a #${id} auth`;
+    if (type === 'refresh_token') {
+      jwtSecretKey = 'refresh_key';
+      jwtExpireTime = '10000s';
+
+      const refresh_token = this.jwtService.sign(
+        { userId },
+        { secret: jwtSecretKey, expiresIn: jwtExpireTime },
+      );
+      return refresh_token;
     }
+  }
 }
