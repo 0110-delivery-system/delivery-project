@@ -1,15 +1,21 @@
-import { IBookmarkRepository } from './bookmark.IRepository';
 import { Injectable } from '@nestjs/common';
+import { Repository } from 'typeorm';
+import { Bookmark } from './entities/bookmark.entity';
 
 @Injectable()
-export class BookmarkRepository implements IBookmarkRepository {
-    getManyUserBookmark(userId: number) {
-        return;
+export class BookmarkRepository extends Repository<Bookmark> {
+    async getManyUserBookmark(userId: number): Promise<Bookmark[]> {
+        return this.find({ where: { UserId: userId } });
     }
-    saveFavoriteStore(userId: number, storeId: number): Promise<void> {
-        return;
+
+    async saveFavoriteStore(userId: number, storeId: number): Promise<void> {
+        const bookmark = new Bookmark();
+        bookmark.UserId = userId;
+        bookmark.StoreId = storeId;
+        await this.save(bookmark);
     }
-    removeFavoriteStore(userId: number, storeId: number) {
-        return;
+
+    async removeFavoriteStore(userId: number, storeId: number): Promise<void> {
+        await this.delete({ UserId: userId, StoreId: storeId });
     }
 }

@@ -1,1 +1,5 @@
-export class CreateBookmarkDto {}
+export class BookmarkDto {
+    id: number;
+    userId: number;
+    storeId: number;
+}

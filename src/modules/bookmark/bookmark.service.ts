@@ -1,16 +1,11 @@
 import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { IBookmarkRepository } from './bookmark.IRepository';
-import { CreateBookmarkDto } from './dto/create-bookmark.dto';
 import { FakeStoreService } from './bookmark.service.spec';
 
 @Injectable()
 export class BookmarkService {
     constructor(@Inject(IBookmarkRepository) private bookmarkRepository: IBookmarkRepository) {}
     storeService = new FakeStoreService();
-
-    create(createBookmarkDto: CreateBookmarkDto) {
-        return 'This action adds a new bookmark';
-    }
 
     async validateAddFavoriteStore(storeId: number, userId: number) {
         const store = await this.findOneStoreId(storeId);
