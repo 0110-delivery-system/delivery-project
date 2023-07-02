@@ -4,18 +4,18 @@ import { Injectable } from '@nestjs/common';
 @Injectable()
 export class MenuRepository implements IMenuRepository {
     createMenu(storeId: number, newMenu: any) {
-        return true;
+        return;
     }
     getManyMenu(storeId: number) {
-        return true;
+        return;
     }
-    getOneMenu(menuId: number) {
-        return true;
+    getMenu(menuId: number) {
+        return;
     }
     updateMenu(menuId: number, newMenu: any) {
-        return true;
+        return;
     }
     deleteMenu(menuId: number) {
-        return true;
+        return;
     }
 }

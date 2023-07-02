@@ -1,6 +1,5 @@
 import { IReviewRepository } from './review.IRepository';
 import { Inject, Injectable, BadRequestException } from '@nestjs/common';
-import { UpdatereviewDto } from './dto/update-review.dto';
 import { FakeAuthService, FakeDeliveryService } from './review.service.spec';
 @Injectable()
 export class ReviewService {
