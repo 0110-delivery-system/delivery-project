@@ -6,7 +6,8 @@ import { FakeStoreService } from './bookmark.service.spec';
 @Injectable()
 export class BookmarkService {
     constructor(@Inject(IBookmarkRepository) private bookmarkRepository: IBookmarkRepository) {}
-    storeService = new FakeStoreService();
+    // storeService = new FakeStoreService();
+    storeService: FakeStoreService;
 
     create(createBookmarkDto: CreateBookmarkDto) {
         return 'This action adds a new bookmark';

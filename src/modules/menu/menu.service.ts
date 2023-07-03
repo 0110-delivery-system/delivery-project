@@ -7,7 +7,7 @@ import { FakeStoreService } from './menu.service.spec';
 @Injectable()
 export class MenuService {
     constructor(@Inject(IMenuRepository) private menuRepository: IMenuRepository) {}
-    storeService = new FakeStoreService();
+    storeService: FakeStoreService;
 
     async addMenu(storeId: number, createMenuDto: CreateMenuDto) {
         const validateResult = this.validateMenu(storeId, createMenuDto);

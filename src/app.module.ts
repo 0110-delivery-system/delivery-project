@@ -13,6 +13,8 @@ import { reviewModule } from './modules/review/review.module';
 import { StoreModule } from './modules/store/store.module';
 import { DatabaseModule } from './database/database.module';
 import { UserModule } from './modules/user/user.module';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
     imports: [
@@ -28,6 +30,17 @@ import { UserModule } from './modules/user/user.module';
         reviewModule,
         StoreModule,
         UserModule,
+        ConfigModule.forRoot({ isGlobal: true }),
+        TypeOrmModule.forRoot({
+            type: 'mysql',
+            host: process.env.DB_HOST,
+            port: 3306,
+            username: process.env.DB_USERNAME,
+            password: process.env.DB_PASSWORD,
+            database: process.env.DB_DATABASE,
+            entities: [],
+            synchronize: false,
+        }),
     ],
     controllers: [AppController],
     providers: [AppService],

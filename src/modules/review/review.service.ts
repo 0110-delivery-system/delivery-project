@@ -1,11 +1,12 @@
 import { IReviewRepository } from './review.IRepository';
 import { Inject, Injectable, BadRequestException } from '@nestjs/common';
 import { FakeAuthService, FakeDeliveryService } from './review.service.spec';
+// import { FakeAuthService, FakeDeliveryService } from './review.service.spec';
 @Injectable()
 export class ReviewService {
     constructor(@Inject(IReviewRepository) private reviewRepository: IReviewRepository) {}
-    authService = new FakeAuthService();
-    orderService = new FakeDeliveryService();
+    authService: FakeAuthService;
+    orderService: FakeDeliveryService;
 
     async createReview(orderId: number, userId: number, review: any) {
         const createResult = this.reviewRepository.saveReview(orderId, userId, review);
