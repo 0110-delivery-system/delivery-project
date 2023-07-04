@@ -12,6 +12,10 @@ export class StoreService {
         return `This action returns all store`;
     }
 
+    getStore(storeId: number) {
+        return null;
+    }
+
     findOne(id: number) {
         return `This action returns a #${id} store`;
     }

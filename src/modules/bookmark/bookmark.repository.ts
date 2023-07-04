@@ -4,12 +4,12 @@ import { Injectable } from '@nestjs/common';
 @Injectable()
 export class BookmarkRepository implements IBookmarkRepository {
     getManyUserBookmark(userId: number) {
-        return;
+        return [1, 2];
     }
-    saveFavoriteStore(userId: number, storeId: number): Promise<void> {
-        return;
+    saveFavoriteStore(userId: number, storeId: number) {
+        return true;
     }
     removeFavoriteStore(userId: number, storeId: number) {
-        return;
+        return true;
     }
 }
