@@ -1,13 +1,11 @@
-import { BadRequestException, Inject, Injectable } from '@nestjs/common';
-import { IAuthRepository } from './auth.IRepository';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
-import { FakeAuthRepository } from './auth.service.spec';
+import { AuthRepository } from './auth.repository';
 
 @Injectable()
 export class AuthService {
-    constructor(private jwtService: JwtService) {}
-    authRepository: FakeAuthRepository;
+    constructor(private jwtService: JwtService, private authRepository: AuthRepository) {}
 
     async signUp(email: string, password: string) {
         const validateEmailResult = await this.validateEmail(email);

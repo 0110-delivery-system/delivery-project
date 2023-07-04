@@ -9,7 +9,7 @@ import { MenuModule } from './modules/menu/menu.module';
 import { NotificationModule } from './modules/notification/notification.module';
 import { OrderModule } from './modules/order/order.module';
 import { OwnerModule } from './modules/owner/owner.module';
-import { reviewModule } from './modules/review/review.module';
+import { ReviewModule } from './modules/review/review.module';
 import { StoreModule } from './modules/store/store.module';
 import { DatabaseModule } from './database/database.module';
 import { UserModule } from './modules/user/user.module';
@@ -27,7 +27,7 @@ import { ConfigModule } from '@nestjs/config';
         NotificationModule,
         OrderModule,
         OwnerModule,
-        reviewModule,
+        ReviewModule,
         StoreModule,
         UserModule,
         ConfigModule.forRoot({ isGlobal: true }),

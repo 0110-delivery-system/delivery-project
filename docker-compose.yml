@@ -1,15 +1,15 @@
-# version: '3.8'
-# services:
-#     database:
-#         image: mysql:8.0
-#         container_name: local-db
-#         restart: always
-#         environment:
-#             MYSQL_ROOT_PASSWORD: A123456*
-#             MYSQL_DATABASE: test
-#             MYSQL_USER: admin
-#             MYSQL_PASSWORD: 1234*A
-#         ports:
-#             - '3010:3306'
-#         volumes:
-#             - ./data/mysql:/var/lib/mysql
+version: '3.8'
+services:
+    database:
+        image: mysql:8.0
+        container_name: local-db
+        restart: always
+        environment:
+            MYSQL_ROOT_PASSWORD: A123456*
+            MYSQL_DATABASE: test
+            MYSQL_USER: admin
+            MYSQL_PASSWORD: 1234*A
+        ports:
+            - '3010:3306'
+        volumes:
+            - ./data/mysql:/var/lib/mysql

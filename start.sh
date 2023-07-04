@@ -18,7 +18,6 @@ function buildNestServer()
 
 function runNestServer()
 {
-  
   eval docker run -d -p 80:3000 
 }
 

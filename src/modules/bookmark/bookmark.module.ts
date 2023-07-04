@@ -2,16 +2,12 @@ import { Module } from '@nestjs/common';
 import { BookmarkService } from './bookmark.service';
 import { BookmarkController } from './bookmark.controller';
 import { BookmarkRepository } from './bookmark.repository';
-import { IBookmarkRepository } from './bookmark.IRepository';
+import { StoreModule } from '../store/store.module';
 
 @Module({
+    imports: [StoreModule],
     controllers: [BookmarkController],
-    providers: [
-        BookmarkService,
-        {
-            provide: IBookmarkRepository,
-            useClass: BookmarkRepository,
-        },
-    ],
+    providers: [BookmarkService, BookmarkRepository],
+    exports: [BookmarkRepository],
 })
 export class BookmarkModule {}

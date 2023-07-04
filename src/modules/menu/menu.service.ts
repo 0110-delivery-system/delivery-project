@@ -1,13 +1,12 @@
 import { Injectable, Inject, BadRequestException } from '@nestjs/common';
 import { CreateMenuDto } from './dto/create-menu.dto';
 import { UpdateMenuDto } from './dto/update-menu.dto';
-import { IMenuRepository } from './menu.IRepository';
-import { FakeStoreService } from './menu.service.spec';
+import { MenuRepository } from './menu.repository';
+import { StoreRepository } from '../store/store.repository';
 
 @Injectable()
 export class MenuService {
-    constructor(@Inject(IMenuRepository) private menuRepository: IMenuRepository) {}
-    storeService: FakeStoreService;
+    constructor(@Inject(MenuRepository) private menuRepository: MenuRepository, @Inject(StoreRepository) private storeRepository: StoreRepository) {}
 
     async addMenu(storeId: number, createMenuDto: CreateMenuDto) {
         const validateResult = this.validateMenu(storeId, createMenuDto);
@@ -24,7 +23,7 @@ export class MenuService {
     async validateMenu(storeId, newMenu) {
         const existingMenus = await this.getManyMenu(storeId);
         const isExistingMenu = existingMenus.some((menu) => menu.name === newMenu.name);
-        const isExistingStore = await this.storeService.getStore(storeId);
+        const isExistingStore = await this.storeRepository.getStore(storeId);
 
         if (isExistingMenu) {
             throw new BadRequestException('이미 존재하는 메뉴입니다.');
@@ -59,7 +58,7 @@ export class MenuService {
     async validateUpdateMenu(storeId, menuId, updateMenu) {
         const existingMenus = await this.getManyMenu(storeId);
         const existingMenu = existingMenus.find((menu) => menu.id === updateMenu.id);
-        const isExistingStore = await this.storeService.getStore(storeId);
+        const isExistingStore = await this.storeRepository.getStore(storeId);
 
         if (existingMenu === undefined) {
             throw new BadRequestException('존재하지 않는 메뉴입니다.');
@@ -94,7 +93,7 @@ export class MenuService {
     async validateDeleteMenu(storeId, menuId) {
         const existingMenus = await this.getManyMenu(storeId);
         const existingMenu = existingMenus.find((menu) => menu.id === menuId);
-        const isExistingStore = await this.storeService.getStore(storeId);
+        const isExistingStore = await this.storeRepository.getStore(storeId);
         if (!existingMenu) {
             throw new BadRequestException('존재하지 않는 메뉴입니다.');
         } else if (!isExistingStore) {
@@ -107,7 +106,7 @@ export class MenuService {
     async removeMenu(storeId: number, menuId: number) {
         const validateResult = await this.validateDeleteMenu(storeId, menuId);
         if (validateResult) {
-            const result = await this.menuRepository.deleteMenu(storeId, menuId);
+            const result = await this.menuRepository.deleteMenu(storeId);
             return result;
         }
     }
