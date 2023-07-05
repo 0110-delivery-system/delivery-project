@@ -15,7 +15,9 @@ export class MockOwnerRepository implements IOwnerRepository {
         return null;
     }
 
-    async createOwner(email: string, password: string, name: string): Promise<void> {}
+    async createOwner(email: string, password: string, name: string): Promise<void> {
+        return;
+    }
 }
 
 describe('OwnerService', () => {

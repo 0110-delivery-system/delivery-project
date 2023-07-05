@@ -1,11 +1,10 @@
+import { StoreRepository } from './../store/store.repository';
+import { BookmarkRepository } from './bookmark.repository';
 import { BadRequestException, Inject, Injectable } from '@nestjs/common';
-import { IBookmarkRepository } from './bookmark.IRepository';
-import { FakeStoreService } from './bookmark.service.spec';
 
 @Injectable()
 export class BookmarkService {
-    constructor(@Inject(IBookmarkRepository) private bookmarkRepository: IBookmarkRepository) {}
-    storeService = new FakeStoreService();
+    constructor(@Inject(BookmarkRepository) private bookmarkRepository: BookmarkRepository, @Inject(StoreRepository) private storeRepository: StoreRepository) {}
 
     async validateAddFavoriteStore(storeId: number, userId: number) {
         const store = await this.findOneStoreId(storeId);
@@ -37,7 +36,7 @@ export class BookmarkService {
     }
 
     async findOneStoreId(storeId: number) {
-        const store = await this.storeService.getStore(storeId);
+        const store = await this.storeRepository.getStore(storeId);
         return store ?? null;
     }
 
