@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { Bookmark } from './entities/bookmark.entity';
+import { IBookmarkRepository } from './bookmark.IRepository';
 
 @Injectable()
 export class BookmarkRepository implements IBookmarkRepository {
