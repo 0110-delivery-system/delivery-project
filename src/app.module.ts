@@ -15,6 +15,7 @@ import { DatabaseModule } from './database/database.module';
 import { UserModule } from './modules/user/user.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
+import { Bookmark } from './modules/bookmark/entities/bookmark.entity';
 
 @Module({
     imports: [
@@ -30,17 +31,17 @@ import { ConfigModule } from '@nestjs/config';
         ReviewModule,
         StoreModule,
         UserModule,
-        ConfigModule.forRoot({ isGlobal: true }),
-        TypeOrmModule.forRoot({
-            type: 'mysql',
-            host: process.env.DB_HOST,
-            port: 3306,
-            username: process.env.DB_USERNAME,
-            password: process.env.DB_PASSWORD,
-            database: process.env.DB_DATABASE,
-            entities: [],
-            synchronize: false,
-        }),
+        // ConfigModule.forRoot({ isGlobal: true }),
+        // TypeOrmModule.forRoot({
+        //     type: 'mysql',
+        //     host: process.env.DB_HOST,
+        //     port: 3306,
+        //     username: process.env.DB_USERNAME,
+        //     password: process.env.DB_PASSWORD,
+        //     database: process.env.DB_DATABASE,
+        //     entities: [Bookmark],
+        //     synchronize: false,
+        // }),
     ],
     controllers: [AppController],
     providers: [AppService],
