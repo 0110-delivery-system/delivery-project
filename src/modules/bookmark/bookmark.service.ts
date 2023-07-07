@@ -1,26 +1,63 @@
-import { Injectable } from '@nestjs/common';
-import { CreateBookmarkDto } from './dto/create-bookmark.dto';
-import { UpdateBookmarkDto } from './dto/update-bookmark.dto';
+import { StoreRepository } from './../store/store.repository';
+import { BookmarkRepository } from './bookmark.repository';
+import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 
 @Injectable()
 export class BookmarkService {
-    create(createBookmarkDto: CreateBookmarkDto) {
-        return 'This action adds a new bookmark';
+    constructor(@Inject(BookmarkRepository) private bookmarkRepository: BookmarkRepository, @Inject(StoreRepository) private storeRepository: StoreRepository) {}
+
+    async validateAddFavoriteStore(storeId: number, userId: number) {
+        const store = await this.findOneStoreId(storeId);
+        const bookmark = await this.bookmarkRepository.getManyUserBookmark(userId);
+        if (store === null) {
+            throw new BadRequestException('존재하지 않는 매장입니다.');
+        } else if (bookmark.includes(storeId)) {
+            throw new BadRequestException('이미 즐겨찾기한 매장입니다.');
+        } else {
+            return true;
+        }
     }
 
-    findAll() {
-        return `This action returns all bookmark`;
+    async addFavoriteStore(userId: number, storeId: number) {
+        const validateResult = await this.validateAddFavoriteStore(storeId, userId);
+        if (validateResult) {
+            const saveResult = await this.bookmarkRepository.saveFavoriteStore(userId, storeId);
+            if (saveResult) {
+                return true;
+            } else {
+                return false;
+            }
+        }
     }
 
-    findOne(id: number) {
-        return `This action returns a #${id} bookmark`;
+    async getManyFavoriteStores(userId: number) {
+        const bookmark = await this.bookmarkRepository.getManyUserBookmark(userId);
+        return bookmark ?? null;
     }
 
-    update(id: number, updateBookmarkDto: UpdateBookmarkDto) {
-        return `This action updates a #${id} bookmark`;
+    async findOneStoreId(storeId: number) {
+        const store = await this.storeRepository.getStore(storeId);
+        return store ?? null;
     }
 
-    remove(id: number) {
-        return `This action removes a #${id} bookmark`;
+    async validateSavedFavoriteStore(userId: number, storeId: number) {
+        const bookmark = await this.bookmarkRepository.getManyUserBookmark(userId);
+        if (bookmark.includes(storeId)) {
+            return true;
+        } else if (!bookmark.includes(storeId)) {
+            throw new BadRequestException('즐겨찾기 된 매장이 아닙니다.');
+        }
+    }
+
+    async deleteFavoriteStore(userId: number, storeId: number) {
+        const validateResult = await this.validateSavedFavoriteStore(userId, storeId);
+        if (validateResult) {
+            const removeResult = await this.bookmarkRepository.removeFavoriteStore(userId, storeId);
+            if (removeResult) {
+                return true;
+            } else {
+                return false;
+            }
+        }
     }
 }
