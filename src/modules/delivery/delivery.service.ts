@@ -6,7 +6,7 @@ import { DeliveryRepository } from './delivery.repository';
 export class DeliveryService {
     constructor(@Inject(IDeliveryRepository) private deliveryRepository: IDeliveryRepository) {}
 
-    async validateCreateDelivery(deliveryInfo: { deliveryAddress: string; receiver: string }) {
+    async validatecreateDelivery(deliveryInfo: { deliveryAddress: string; receiver: string }) {
         if (!deliveryInfo.deliveryAddress) {
             throw new BadRequestException('배달 주소지가 없습니다.');
         }
@@ -17,9 +17,9 @@ export class DeliveryService {
     }
 
     async createDelivery(orderId: number, deliveryInfo: any) {
-        const validateResult = await this.validateCreateDelivery(deliveryInfo);
+        const validateResult = await this.validatecreateDelivery(deliveryInfo);
         if (validateResult) {
-            const result = await this.deliveryRepository.saveDeliveryInfo(orderId, deliveryInfo);
+            const result = await this.deliveryRepository.createDelivery(orderId, deliveryInfo);
             return result;
         }
     }

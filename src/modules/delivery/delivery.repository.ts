@@ -1,62 +1,65 @@
+import { InjectRepository } from '@nestjs/typeorm';
 import { IDeliveryRepository } from './delivery.IDeliveryRepository';
-import { Injectable } from '@nestjs/common';
+import { Injectable, BadRequestException } from '@nestjs/common';
+import { Repository } from 'typeorm';
+import { Order } from '../order/entities/order.entity';
+import { Delivery } from './entities/delivery.entity';
 
 @Injectable()
 export class DeliveryRepository implements IDeliveryRepository {
-    saveDeliveryInfo(orderId: number, deliveryInfo: any) {
-        if (orderId === 1) {
-            return {
-                deliveryId: 1,
-                status: 'WAIT_DELIVERY',
-                receiver: '김철수',
-                deliveryAddress: '서울시 강남구',
-            };
-        } else if (orderId === 2) {
-            return {
-                deliveryId: 2,
-                status: 'START_DELIVERY',
-                receiver: '김철수',
-                deliveryAddress: '서울시 강남구',
-            };
+    constructor(@InjectRepository(Delivery) private deliveryModel: Repository<Delivery>, @InjectRepository(Order) private orderModel: Repository<Order>) {}
+
+    async createDelivery(orderId: number, deliveryInfo: any) {
+        const order = await this.orderModel.findOne({ where: { id: orderId } });
+        if (!order) {
+            throw new BadRequestException(`Order with ID ${orderId} not found`);
         }
+
+        const { status, receiver, deliveryAddress } = deliveryInfo;
+
+        const delivery = this.deliveryModel.create();
+        delivery.Order = order;
+        delivery.status = status;
+        delivery.receiver = receiver;
+        delivery.address = deliveryAddress;
+
+        const createdDelivery = await this.deliveryModel.save(delivery);
+        return createdDelivery;
     }
-    updateDeliveryStatus(deliveryId: number, status: string) {
-        if (deliveryId === 1) {
-            return {
-                status: 'START_DELIVERY',
-                deliveryId: 1,
-                receiver: '김철수',
-                deliveryAddress: '서울시 강남구',
-            };
-        } else if (deliveryId === 2) {
-            return true;
-        }
-    }
-    findOneDeliveryStatus(deliveryId: number) {
-        if (deliveryId === 1) {
-            return { status: 'WAIT_DELIVERY' };
-        } else if (deliveryId === 2) {
-            return { status: 'START_DELIVERY' };
-        } else if (deliveryId === 3) {
-            return { status: 'COMPLETE_DELIVERY' };
-        } else if (deliveryId === 4) {
+
+    async updateDeliveryStatus(deliveryId: number, status: string): Promise<Delivery | null> {
+        const delivery = await this.deliveryModel.findOne({ where: { id: deliveryId } });
+        if (!delivery) {
             return null;
         }
+        delivery.status = status;
+        const updatedDelivery = await this.deliveryModel.save(delivery);
+        return updatedDelivery;
     }
-    findOneDeliveryInfo(deliveryId: number) {
-        if (deliveryId === 1) {
-            return {
-                userId: 1,
-                status: 'START_DELIVERY',
-                deliveryId: 1,
-                receiver: '김철수',
-                deliveryAddress: '서울시 강남구',
-                review: null,
-                time: '2021-01-01',
-            };
-        } else if (deliveryId === 2) {
+
+    async findOneDeliveryStatus(deliveryId: number): Promise<string | null> {
+        const delivery = await this.deliveryModel.findOne({ where: { id: deliveryId } });
+        if (!delivery) {
             return null;
         }
-        return;
+        return delivery.status;
+    }
+
+    async findOneDeliveryInfo(deliveryId: number): Promise<any | null> {
+        const delivery = await this.deliveryModel.findOne({ where: { id: deliveryId } });
+        if (!delivery) {
+            return null;
+        }
+        const deliveryInfo = {
+            userId: delivery.UserId,
+            status: delivery.status,
+            deliveryId: delivery.id,
+            receiver: delivery.receiver,
+            deliveryAddress: delivery.address,
+            review: delivery.Review,
+            // time: delivery.createdAt.toISOString(),
+        };
+
+        return deliveryInfo;
     }
 }

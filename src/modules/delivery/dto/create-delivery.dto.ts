@@ -1,1 +1,1 @@
-export class CreateDeliveryDto {}
+export class createDeliveryDto {}
