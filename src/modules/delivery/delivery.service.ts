@@ -1,26 +1,78 @@
-import { Injectable } from '@nestjs/common';
-import { CreateDeliveryDto } from './dto/create-delivery.dto';
-import { UpdateDeliveryDto } from './dto/update-delivery.dto';
+import { BadRequestException, Inject, Injectable } from '@nestjs/common';
+import { IDeliveryRepository } from './delivery.IDeliveryRepository';
+import { DeliveryRepository } from './delivery.repository';
 
 @Injectable()
 export class DeliveryService {
-  create(createDeliveryDto: CreateDeliveryDto) {
-    return 'This action adds a new delivery';
-  }
+    constructor(@Inject(IDeliveryRepository) private deliveryRepository: IDeliveryRepository) {}
 
-  findAll() {
-    return `This action returns all delivery`;
-  }
+    async validateCreateDelivery(deliveryInfo: { deliveryAddress: string; receiver: string }) {
+        if (!deliveryInfo.deliveryAddress) {
+            throw new BadRequestException('배달 주소지가 없습니다.');
+        }
+        if (!deliveryInfo.receiver) {
+            throw new BadRequestException('수령인이 없습니다.');
+        }
+        return true;
+    }
 
-  findOne(id: number) {
-    return `This action returns a #${id} delivery`;
-  }
+    async createDelivery(orderId: number, deliveryInfo: any) {
+        const validateResult = await this.validateCreateDelivery(deliveryInfo);
+        if (validateResult) {
+            const result = await this.deliveryRepository.saveDeliveryInfo(orderId, deliveryInfo);
+            return result;
+        }
+    }
 
-  update(id: number, updateDeliveryDto: UpdateDeliveryDto) {
-    return `This action updates a #${id} delivery`;
-  }
+    async validateStartDelivery(deliveryId: number) {
+        const result = await this.deliveryRepository.findOneDeliveryStatus(deliveryId);
+        if (result.status === 'START_DELIVERY') {
+            throw new BadRequestException('이미 배달이 출발했습니다.');
+        }
+        if (result.status === 'COMPLETE_DELIVERY') {
+            throw new BadRequestException('이미 배달이 완료되었습니다.');
+        }
+        return true;
+    }
 
-  remove(id: number) {
-    return `This action removes a #${id} delivery`;
-  }
+    async startDelivery(deliveryId: number) {
+        const validateResult = await this.validateStartDelivery(deliveryId);
+        if (validateResult) {
+            const result = await this.deliveryRepository.updateDeliveryStatus(deliveryId, 'START_DELIVERY');
+            return result;
+        } else {
+            return false;
+        }
+    }
+
+    async validateCompleteDelivery(deliveryId: number) {
+        const result = await this.deliveryRepository.findOneDeliveryStatus(deliveryId);
+        if (result.status === 'WAIT_DELIVERY') {
+            throw new BadRequestException('아직 배달이 출발하지 않았습니다.');
+        }
+        if (result.status === 'COMPLETE_DELIVERY') {
+            throw new BadRequestException('이미 배달이 완료되었습니다.');
+        }
+        return true;
+    }
+
+    async completeDelivery(deliveryId: number) {
+        const validateResult = await this.validateCompleteDelivery(deliveryId);
+        if (validateResult) {
+            const result = await this.deliveryRepository.updateDeliveryStatus(deliveryId, 'COMPLETE_DELIVERY');
+            return result;
+        } else {
+            return false;
+        }
+    }
+
+    async getDeliveryStatus(deliveryId: number) {
+        const result = await this.deliveryRepository.findOneDeliveryStatus(deliveryId);
+        return result ?? null;
+    }
+
+    async getDeliveryInfo(deliveryId: number) {
+        const result = await this.deliveryRepository.findOneDeliveryInfo(deliveryId);
+        return result ?? null;
+    }
 }

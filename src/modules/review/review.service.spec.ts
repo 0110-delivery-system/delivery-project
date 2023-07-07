@@ -2,7 +2,6 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { ReviewService } from './review.service';
 import { BadRequestException } from '@nestjs/common';
 import { IReviewRepository } from './review.IRepository';
-import { jest } from '@jest/globals';
 
 export class FakeAuthService {
     getUser(userId: number) {
@@ -234,7 +233,7 @@ describe('reviewService', () => {
             const currentTime = new Date();
             const oneHourAfterDelivery = addHours(currentTime, 1);
 
-            jest.setSystemTime(oneHourAfterDelivery);
+            // jest.setSystemTime(oneHourAfterDelivery);
 
             await expect(reviewService.validateReview(userId, orderId, review)).rejects.toThrowError(
                 new BadRequestException('"COMPLETE_DELIVERY" 후 1시간 이후에 리뷰를 작성할 수 있습니다.')
@@ -252,7 +251,7 @@ describe('reviewService', () => {
             const currentTime = new Date();
             const twentyFourHoursAfterDelivery = addHours(currentTime, 24);
 
-            jest.setSystemTime(twentyFourHoursAfterDelivery);
+            // jest.setSystemTime(twentyFourHoursAfterDelivery);
 
             await expect(reviewService.validateReview(userId, orderId, review)).rejects.toThrowError(new BadRequestException('리뷰 작성 기간이 지났습니다.'));
         });

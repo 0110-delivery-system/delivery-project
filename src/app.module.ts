@@ -9,11 +9,29 @@ import { MenuModule } from './modules/menu/menu.module';
 import { NotificationModule } from './modules/notification/notification.module';
 import { OrderModule } from './modules/order/order.module';
 import { OwnerModule } from './modules/owner/owner.module';
-import { reviewModule } from './modules/review/review.module';
+import { ReviewModule } from './modules/review/review.module';
 import { StoreModule } from './modules/store/store.module';
+import { DatabaseModule } from './database/database.module';
+import { UserModule } from './modules/user/user.module';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
-    imports: [PaymentModule, AuthModule, BookmarkModule, DeliveryModule, MenuModule, NotificationModule, OrderModule, OwnerModule, reviewModule, StoreModule],
+    imports: [
+        DatabaseModule,
+        PaymentModule,
+        AuthModule,
+        BookmarkModule,
+        DeliveryModule,
+        MenuModule,
+        NotificationModule,
+        OrderModule,
+        OwnerModule,
+        ReviewModule,
+        StoreModule,
+        UserModule,
+        ConfigModule.forRoot({ isGlobal: true }),
+    ],
     controllers: [AppController],
     providers: [AppService],
 })
