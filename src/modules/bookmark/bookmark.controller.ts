@@ -1,34 +1,27 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Param, Delete } from '@nestjs/common';
 import { BookmarkService } from './bookmark.service';
-import { CreateBookmarkDto } from './dto/create-bookmark.dto';
-import { UpdateBookmarkDto } from './dto/update-bookmark.dto';
 
 @Controller('bookmark')
 export class BookmarkController {
-  constructor(private readonly bookmarkService: BookmarkService) {}
+    constructor(private readonly bookmarkService: BookmarkService) {}
 
-  @Post()
-  create(@Body() createBookmarkDto: CreateBookmarkDto) {
-    return this.bookmarkService.create(createBookmarkDto);
-  }
+    @Post(':userId/stores/:storeId')
+    async addFavoriteStore(@Param('userId') userId: number, @Param('storeId') storeId: number): Promise<boolean> {
+        return await this.bookmarkService.addFavoriteStore(userId, storeId);
+    }
 
-  @Get()
-  findAll() {
-    return this.bookmarkService.findAll();
-  }
+    @Get('/bookmark/:userId')
+    getManyFavoriteStores(@Param('userId') userId: number) {
+        return this.bookmarkService.getManyFavoriteStores(userId);
+    }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.bookmarkService.findOne(+id);
-  }
+    @Get('/:storeId')
+    async findOneStoreId(@Param('storeId') storeId: number) {
+        return await this.bookmarkService.findOneStoreId(storeId);
+    }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateBookmarkDto: UpdateBookmarkDto) {
-    return this.bookmarkService.update(+id, updateBookmarkDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.bookmarkService.remove(+id);
-  }
+    @Delete(':userId/stores/:storeId')
+    async removeFavoriteStore(@Param('userId') userId: number, @Param('storeId') storeId: number): Promise<boolean> {
+        return await this.bookmarkService.deleteFavoriteStore(userId, storeId);
+    }
 }

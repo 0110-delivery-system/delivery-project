@@ -1,7 +1,6 @@
 import { BadRequestException, Inject, Injectable } from '@nestjs/common';
-import { CreateDeliveryDto } from './dto/create-delivery.dto';
-import { UpdateDeliveryDto } from './dto/update-delivery.dto';
 import { IDeliveryRepository } from './delivery.IDeliveryRepository';
+import { DeliveryRepository } from './delivery.repository';
 
 @Injectable()
 export class DeliveryService {
