@@ -13,7 +13,6 @@ import { ReviewModule } from './modules/review/review.module';
 import { StoreModule } from './modules/store/store.module';
 import { DatabaseModule } from './database/database.module';
 import { UserModule } from './modules/user/user.module';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
 
 @Module({
