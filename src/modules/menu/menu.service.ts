@@ -1,12 +1,12 @@
 import { Injectable, Inject, BadRequestException } from '@nestjs/common';
 import { CreateMenuDto } from './dto/create-menu.dto';
 import { UpdateMenuDto } from './dto/update-menu.dto';
+import { IStoreRepository } from '../store/store.IStoreRepository';
 import { MenuRepository } from './menu.repository';
-import { StoreRepository } from '../store/store.repository';
 
 @Injectable()
 export class MenuService {
-    constructor(@Inject(MenuRepository) private menuRepository: MenuRepository, @Inject(StoreRepository) private storeRepository: StoreRepository) {}
+    constructor(@Inject(MenuRepository) private menuRepository: MenuRepository, @Inject(IStoreRepository) private storeRepository: IStoreRepository) {}
 
     async addMenu(storeId: number, createMenuDto: CreateMenuDto) {
         const validateResult = this.validateMenu(storeId, createMenuDto);

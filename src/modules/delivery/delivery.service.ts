@@ -1,9 +1,9 @@
 import { BadRequestException, Inject, Injectable } from '@nestjs/common';
-import { DeliveryRepository } from './delivery.repository';
+import { IDeliveryRepository } from './delivery.IDeliveryRepository';
 
 @Injectable()
 export class DeliveryService {
-    constructor(@Inject(DeliveryRepository) private deliveryRepository: DeliveryRepository) {}
+    constructor(@Inject(IDeliveryRepository) private deliveryRepository: IDeliveryRepository) {}
 
     async validatecreateDelivery(deliveryInfo: { deliveryAddress: string; receiver: string }) {
         if (!deliveryInfo.deliveryAddress) {

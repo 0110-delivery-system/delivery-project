@@ -3,16 +3,16 @@ import { MenuService } from './menu.service';
 import { CreateMenuDto } from './dto/create-menu.dto';
 import { UpdateMenuDto } from './dto/update-menu.dto';
 
-@Controller('stores/:storeId/menus')
+@Controller('menu')
 export class MenuController {
     constructor(private readonly menuService: MenuService) {}
 
-    @Post()
+    @Post('/:storeId')
     addMenu(@Param('storeId') storeId: number, @Body() createMenuDto: CreateMenuDto) {
         return this.menuService.addMenu(storeId, createMenuDto);
     }
 
-    @Get()
+    @Get(':storeId')
     getManyMenu(@Param('storeId') storeId: number) {
         return this.menuService.getManyMenu(storeId);
     }

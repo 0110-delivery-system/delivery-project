@@ -1,13 +1,15 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
-import { AuthRepository } from './auth.repository';
+import { Inject } from '@nestjs/common';
+import { IUserRepository } from '../user/user.IRepository';
 
 @Injectable()
 export class AuthService {
-    constructor(private jwtService: JwtService, private authRepository: AuthRepository) {}
+    constructor(private jwtService: JwtService, @Inject(IUserRepository) private userRepository: IUserRepository) {}
 
-    async signUp(email: string, password: string) {
+    async signUp(body: { email: string; password: string }) {
+        const { email, password } = body;
         const validateEmailResult = await this.validateEmail(email);
         if (!validateEmailResult) {
             return validateEmailResult;
@@ -17,7 +19,7 @@ export class AuthService {
             return validatePasswordResult;
         }
         const hashedPassword = await bcrypt.hash(password, 10);
-        await this.authRepository.createUser(email, hashedPassword);
+        await this.userRepository.createUser(email, hashedPassword);
         return;
     }
 
@@ -26,7 +28,7 @@ export class AuthService {
             throw new BadRequestException('이메일 형식이 올바르지 않습니다');
         }
 
-        const user = await this.authRepository.findUserByEmail(email);
+        const user = await this.userRepository.findUserByEmail(email);
         if (user) {
             throw new BadRequestException('이미 존재하는 이메일 입니다');
         }
@@ -43,8 +45,9 @@ export class AuthService {
         return true;
     }
 
-    async login(email: string, password: string) {
-        const user = await this.authRepository.findUserByEmail(email);
+    async login(body: { email: string; password: string }) {
+        const { email, password } = body;
+        const user = await this.userRepository.findUserByEmail(email);
         if (!user) {
             throw new BadRequestException('계정 정보가 올바르지 않습니다');
         }

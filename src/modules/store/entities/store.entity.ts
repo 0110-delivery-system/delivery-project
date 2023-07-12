@@ -27,6 +27,6 @@ export class Store {
     @JoinColumn([{ name: 'OwnerId', referencedColumnName: 'id' }])
     Owner: Owner;
 
-    @OneToMany(() => Menu, (menu) => menu.Store)
+    @OneToMany(() => Menu, (menu) => menu.store)
     Menu: Menu;
 }

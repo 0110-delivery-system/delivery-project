@@ -1,10 +1,10 @@
-import { StoreRepository } from './../store/store.repository';
+import { IStoreRepository } from '../store/store.IStoreRepository';
 import { BookmarkRepository } from './bookmark.repository';
 import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 
 @Injectable()
 export class BookmarkService {
-    constructor(@Inject(BookmarkRepository) private bookmarkRepository: BookmarkRepository, @Inject(StoreRepository) private storeRepository: StoreRepository) {}
+    constructor(@Inject(BookmarkRepository) private bookmarkRepository: BookmarkRepository, @Inject(IStoreRepository) private storeRepository: IStoreRepository) {}
 
     async validateAddFavoriteStore(storeId: number, userId: number) {
         const store = await this.findOneStoreId(storeId);

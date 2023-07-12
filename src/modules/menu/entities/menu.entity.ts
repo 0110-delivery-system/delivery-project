@@ -7,7 +7,7 @@ export class Menu {
     id: number;
 
     @Column('int', { name: 'StoreId' })
-    StoreId: number;
+    storeId: number;
 
     @Column('varchar', { name: 'name' })
     name: string;
@@ -17,5 +17,5 @@ export class Menu {
 
     @ManyToOne(() => Store, (store) => store.Menu, { onDelete: 'CASCADE', onUpdate: 'CASCADE' })
     @JoinColumn([{ name: 'StoreId', referencedColumnName: 'id' }])
-    Store: Store;
+    store: Store;
 }
