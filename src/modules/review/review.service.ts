@@ -1,14 +1,14 @@
 import { Inject, Injectable, BadRequestException } from '@nestjs/common';
-import { IReviewRepository } from './review.IRepository';
-import { IDeliveryRepository } from '../delivery/delivery.IDeliveryRepository';
-import { IUserRepository } from '../user/user.IRepository';
+import { ReviewRepository } from './review.repository';
+import { UserRepository } from '../user/user.repository';
+import { DeliveryRepository } from '../delivery/delivery.repository';
 
 @Injectable()
 export class ReviewService {
     constructor(
-        @Inject(IReviewRepository) private reviewRepository: IReviewRepository,
-        @Inject(IUserRepository) private userRepository: IUserRepository,
-        @Inject(IDeliveryRepository) private deliveryRepository: IDeliveryRepository
+        @Inject(ReviewRepository) private reviewRepository: ReviewRepository,
+        @Inject(UserRepository) private userRepository: UserRepository,
+        @Inject(DeliveryRepository) private deliveryRepository: DeliveryRepository
     ) {}
 
     async createReview(orderId: number, userId: number, review: any) {

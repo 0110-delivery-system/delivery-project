@@ -1,9 +1,9 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { FakeOrderRepository } from './order.service.spec';
+import { OrderRepository } from './order.repository';
 
 @Injectable()
 export class OrderService {
-    orderRepository: FakeOrderRepository;
+    constructor(private readonly orderRepository: OrderRepository) {}
 
     async validateOrderInfo(menuList, storeId: number) {
         if (menuList.length > 10) {
@@ -63,7 +63,7 @@ export class OrderService {
     async getManyOrderHistory(nowDate: Date, userId: number) {
         const orderList = await this.orderRepository.getOrderByUserId(userId);
 
-        let confirmOrderList = [];
+        let confirmOrderList;
         for (let i = 0; i < orderList.length; i++) {
             const result = this.checkAfterThreeMonth(nowDate, orderList[i].createdAt);
             if (result === true) {

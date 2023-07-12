@@ -1,10 +1,9 @@
 import { BadRequestException, Inject, Injectable } from '@nestjs/common';
-import { IDeliveryRepository } from './delivery.IDeliveryRepository';
 import { DeliveryRepository } from './delivery.repository';
 
 @Injectable()
 export class DeliveryService {
-    constructor(@Inject(IDeliveryRepository) private deliveryRepository: IDeliveryRepository) {}
+    constructor(@Inject(DeliveryRepository) private deliveryRepository: DeliveryRepository) {}
 
     async validatecreateDelivery(deliveryInfo: { deliveryAddress: string; receiver: string }) {
         if (!deliveryInfo.deliveryAddress) {
@@ -26,10 +25,10 @@ export class DeliveryService {
 
     async validateStartDelivery(deliveryId: number) {
         const result = await this.deliveryRepository.findOneDeliveryStatus(deliveryId);
-        if (result.status === 'START_DELIVERY') {
+        if (result === 'START_DELIVERY') {
             throw new BadRequestException('이미 배달이 출발했습니다.');
         }
-        if (result.status === 'COMPLETE_DELIVERY') {
+        if (result === 'COMPLETE_DELIVERY') {
             throw new BadRequestException('이미 배달이 완료되었습니다.');
         }
         return true;
@@ -47,10 +46,10 @@ export class DeliveryService {
 
     async validateCompleteDelivery(deliveryId: number) {
         const result = await this.deliveryRepository.findOneDeliveryStatus(deliveryId);
-        if (result.status === 'WAIT_DELIVERY') {
+        if (result === 'WAIT_DELIVERY') {
             throw new BadRequestException('아직 배달이 출발하지 않았습니다.');
         }
-        if (result.status === 'COMPLETE_DELIVERY') {
+        if (result === 'COMPLETE_DELIVERY') {
             throw new BadRequestException('이미 배달이 완료되었습니다.');
         }
         return true;

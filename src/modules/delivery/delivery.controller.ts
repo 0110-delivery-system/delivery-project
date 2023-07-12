@@ -1,9 +1,9 @@
 import { Controller, Post, Param, Body, Get } from '@nestjs/common';
 import { DeliveryService } from './delivery.service';
 
-@Controller('deliveries')
+@Controller('delivery')
 export class DeliveryController {
-    constructor(private readonly deliveryService: DeliveryService) {}
+    constructor(private deliveryService: DeliveryService) {}
 
     @Post(':orderId')
     async createDelivery(@Param('orderId') orderId: number, @Body() deliveryInfo: any) {

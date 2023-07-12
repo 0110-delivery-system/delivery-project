@@ -4,12 +4,12 @@ import { DeliveryController } from './delivery.controller';
 import { DeliveryRepository } from './delivery.repository';
 import { Delivery } from './entities/delivery.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { IDeliveryRepository } from './delivery.IDeliveryRepository';
+import { OrderModule } from '../order/order.module';
 
 @Module({
-    imports: [TypeOrmModule.forFeature([Delivery])],
+    imports: [TypeOrmModule.forFeature([Delivery]), OrderModule],
     controllers: [DeliveryController],
-    providers: [DeliveryService, { provide: IDeliveryRepository, useClass: DeliveryRepository }],
-    exports: [IDeliveryRepository],
+    providers: [DeliveryService, DeliveryRepository],
+    exports: [DeliveryRepository],
 })
 export class DeliveryModule {}

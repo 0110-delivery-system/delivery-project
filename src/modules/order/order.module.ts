@@ -9,5 +9,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
     imports: [TypeOrmModule.forFeature([Order])],
     controllers: [OrderController],
     providers: [OrderService, OrderRepository],
+    exports: [OrderRepository],
 })
 export class OrderModule {}
