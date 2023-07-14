@@ -1,1 +1,8 @@
-export class CreateOrderDto {}
+import { IsNumber } from 'class-validator';
+
+export class CreateOrderDto {
+    @IsNumber()
+    userId: number;
+    @IsNumber({}, { each: true })
+    menuIds: number[];
+}

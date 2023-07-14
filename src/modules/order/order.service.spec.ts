@@ -10,7 +10,7 @@ export class FakeOrderRepository {
         return { id: 1, foodName: '마라샹궈', price: 15000 };
     }
 
-    createOrder(storeId: number, menuList) {
+    createOrder(storeId: number, menuIds) {
         return;
     }
 
@@ -81,17 +81,17 @@ describe('OrderService', () => {
 
     describe('validateOrderInfo()', () => {
         it('존재하지 않는 메뉴를 주문하였을 때 - 실패', async () => {
-            const menuList = [
+            const menuIds = [
                 { id: 1, foodName: '마라샹궈' },
                 { id: 999, foodName: '콩' },
             ];
             const storeId = 1;
-            await expect(orderService.validateOrderInfo(menuList, storeId)).rejects.toThrowError(new BadRequestException('존재하지 않는 메뉴입니다'));
+            await expect(orderService.validateOrderInfo(menuIds, storeId)).rejects.toThrowError(new BadRequestException('존재하지 않는 메뉴입니다'));
         });
 
         it('메뉴를 10개 초과하여 주문하였을 때 - 실패', async () => {
             const storeId = 1;
-            const menuList = [
+            const menuIds = [
                 { id: 1, foodName: '마라샹궈', price: 15000 },
                 { id: 2, foodName: '콩', price: 100 },
                 { id: 3, foodName: '콩자반', price: 100 },
@@ -104,16 +104,16 @@ describe('OrderService', () => {
                 { id: 10, foodName: '콩고기', price: 100 },
                 { id: 11, foodName: '콩싫어...', price: 100 },
             ];
-            await expect(orderService.validateOrderInfo(menuList, storeId)).rejects.toThrowError(new BadRequestException('메뉴가 10개를 초과하였습니다'));
+            await expect(orderService.validateOrderInfo(menuIds, storeId)).rejects.toThrowError(new BadRequestException('메뉴가 10개를 초과하였습니다'));
         });
 
         it('주문 검증을 통과한 경우 - 성공', async () => {
             const storeId = 1;
-            const menuList = [
+            const menuIds = [
                 { id: 1, foodName: '마라샹궈', price: 15000 },
                 { id: 2, foodName: '마라탕', price: 10000 },
             ];
-            const result = await orderService.validateOrderInfo(menuList, storeId);
+            const result = await orderService.validateOrderInfo(menuIds, storeId);
             expect(result).toEqual(true);
         });
     });
@@ -121,71 +121,71 @@ describe('OrderService', () => {
     describe('createOrder()', () => {
         it('주문 검증에 실패한 경우 - 실패', async () => {
             const storeId = 1;
-            const menuList = [
+            const menuIds = [
                 { id: 1, foodName: '마라샹궈', price: 15000 },
                 { id: 999, foodName: '콩', price: 100 },
             ];
-            await expect(orderService.createOrder(storeId, menuList)).rejects.toThrowError(new BadRequestException('존재하지 않는 메뉴입니다'));
+            await expect(orderService.createOrder(storeId, menuIds)).rejects.toThrowError(new BadRequestException('존재하지 않는 메뉴입니다'));
         });
 
         it('주문 검증에 성공한 경우 - 성공', async () => {
             const storeId = 1;
-            const menuList = [
+            const menuIds = [
                 { id: 1, foodName: '마라샹궈', price: 15000 },
                 { id: 2, foodName: '마라탕', price: 10000 },
             ];
-            const result = await orderService.createOrder(storeId, menuList);
+            const result = await orderService.createOrder(storeId, menuIds);
             expect(result).toEqual(undefined);
         });
     });
 
-    describe('checkOrderStatus_cancle', () => {
+    describe('checkOrderStatus_cancel', () => {
         it('주문 상태가 주문 확정일 경우 - 실패', () => {
             const orderStatus = '주문 확정';
             expect(() => {
-                orderService.checkOrderStatus_cancle(orderStatus);
+                orderService.checkOrderStatus_cancel(orderStatus);
             }).toThrowError('주문 확정된 주문은 취소할 수 없습니다');
         });
 
         it('배달중인 주문은 취소할 수 없습니다 - 실패', () => {
             const orderStatus = '배달 중';
             expect(() => {
-                orderService.checkOrderStatus_cancle(orderStatus);
+                orderService.checkOrderStatus_cancel(orderStatus);
             }).toThrowError('배달 중인 주문은 취소할 수 없습니다');
         });
 
         it('배달이 완료된 주문은 취소할 수 없습니다 - 실패', () => {
             const orderStatus = '배달 완료';
             expect(() => {
-                orderService.checkOrderStatus_cancle(orderStatus);
+                orderService.checkOrderStatus_cancel(orderStatus);
             }).toThrowError('배달이 완료된 주문은 취소할 수 없습니다');
         });
 
         it('validation에 성공했을 경우', () => {
             const orderStatus = '주문 접수';
-            const result = orderService.checkOrderStatus_cancle(orderStatus);
+            const result = orderService.checkOrderStatus_cancel(orderStatus);
             expect(result).toEqual(true);
         });
     });
 
-    describe('cancleOrder()', () => {
+    describe('cancelOrder()', () => {
         it('주문 상태가 주문 접수 상태가 아닐 때 - 실패', async () => {
             const orderId_receive = 1;
             const orderId_on_delivery = 2;
             const orderId3_complete = 3;
-            await expect(orderService.cancleOrder(orderId_receive)).rejects.toThrowError('주문 확정된 주문은 취소할 수 없습니다');
-            await expect(orderService.cancleOrder(orderId_on_delivery)).rejects.toThrowError('배달 중인 주문은 취소할 수 없습니다');
-            await expect(orderService.cancleOrder(orderId3_complete)).rejects.toThrowError('배달이 완료된 주문은 취소할 수 없습니다');
+            await expect(orderService.cancelOrder(orderId_receive)).rejects.toThrowError('주문 확정된 주문은 취소할 수 없습니다');
+            await expect(orderService.cancelOrder(orderId_on_delivery)).rejects.toThrowError('배달 중인 주문은 취소할 수 없습니다');
+            await expect(orderService.cancelOrder(orderId3_complete)).rejects.toThrowError('배달이 완료된 주문은 취소할 수 없습니다');
         });
 
         it('존재하지 않는 주문일 경우', async () => {
             const orderId = 999;
-            await expect(orderService.cancleOrder(orderId)).rejects.toThrowError('존재하지 않는 주문입니다');
+            await expect(orderService.cancelOrder(orderId)).rejects.toThrowError('존재하지 않는 주문입니다');
         });
 
         it('주문이 정상적으로 취소되었을 경우 - 성공', async () => {
             const orderId = 4;
-            const result = await orderService.cancleOrder(orderId);
+            const result = await orderService.cancelOrder(orderId);
             expect(result).toBeNull;
         });
     });

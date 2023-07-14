@@ -26,6 +26,9 @@ export class Order {
         onDelete: 'CASCADE',
         onUpdate: 'CASCADE',
     })
+    @JoinColumn([{ name: 'StoreId', referencedColumnName: 'id' }])
+    StoreId: number;
+
     @JoinColumn([{ name: 'UserId', referencedColumnName: 'id' }])
     User: User;
 
