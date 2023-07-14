@@ -1,5 +1,6 @@
 import { Bookmark } from 'src/modules/bookmark/entities/bookmark.entity';
 import { Menu } from 'src/modules/menu/entities/menu.entity';
+import { Order } from 'src/modules/order/entities/order.entity';
 import { Owner } from 'src/modules/owner/entities/owner.entity';
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
@@ -8,8 +9,8 @@ export class Store {
     @PrimaryGeneratedColumn({ type: 'int', name: 'id' })
     id: number;
 
-    @Column('int', { name: 'OwnerId' })
-    OwnerId: number;
+    @Column('int', { name: 'ownerId' })
+    ownerId: number;
 
     @Column('varchar', { name: 'name' })
     name: string;
@@ -24,9 +25,12 @@ export class Store {
         onDelete: 'CASCADE',
         onUpdate: 'CASCADE',
     })
-    @JoinColumn([{ name: 'OwnerId', referencedColumnName: 'id' }])
+    @JoinColumn([{ name: 'ownerId', referencedColumnName: 'id' }])
     Owner: Owner;
 
-    @OneToMany(() => Menu, (menu) => menu.store)
+    @OneToMany(() => Order, (order) => order.Store)
+    Order: Order;
+
+    @OneToMany(() => Menu, (menu) => menu.Store)
     Menu: Menu;
 }

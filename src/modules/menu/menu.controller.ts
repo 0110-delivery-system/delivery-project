@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Param, Get, Put, Delete } from '@nestjs/common';
+import { Controller, Post, Body, Param, Query, Get, Put, Delete } from '@nestjs/common';
 import { MenuService } from './menu.service';
 import { CreateMenuDto } from './dto/create-menu.dto';
 import { UpdateMenuDto } from './dto/update-menu.dto';
@@ -17,8 +17,8 @@ export class MenuController {
         return this.menuService.getManyMenu(storeId);
     }
 
-    @Get(':menuId')
-    getMenu(@Param('storeId') storeId: number, @Param('menuId') menuId: number) {
+    @Get('')
+    getMenu(@Query('storeId') storeId: number, @Query('menuId') menuId: number) {
         return this.menuService.getMenu(storeId, menuId);
     }
 

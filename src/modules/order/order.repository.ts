@@ -15,8 +15,8 @@ export class OrderRepository {
 
     async createOrder(userId: number, menu: Menu): Promise<Order> {
         const order = this.orderRepository.create();
-        order.UserId = userId;
-        order.StoreId = menu.storeId;
+        order.userId = userId;
+        order.storeId = menu.storeId;
         order.food = JSON.stringify(menu);
         order.status = 'ACCEPT_ORDER';
         order.Review = null;
@@ -30,7 +30,7 @@ export class OrderRepository {
         const menu = await this.menuRepository.findOne({
             where: { storeId: storeId, id: menuId },
         });
-        return menu || undefined;
+        return menu ?? undefined;
     }
 
     async getOrderStatus(orderId: number): Promise<Order | undefined> {
@@ -39,7 +39,7 @@ export class OrderRepository {
     }
 
     async getOrderByUserId(userId: number): Promise<Order[]> {
-        const orders = await this.orderRepository.find({ where: { UserId: userId } });
+        const orders = await this.orderRepository.find({ where: { userId: userId } });
         return orders;
     }
 

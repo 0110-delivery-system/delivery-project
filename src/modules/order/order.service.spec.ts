@@ -16,16 +16,16 @@ export class FakeOrderRepository {
 
     getOrderStatus(orderId: number) {
         if (orderId === 1) {
-            return { id: 1, UserId: 1, food: [{ id: 1, foodName: '마라샹궈', price: 15000 }], status: '주문 확정' };
+            return { id: 1, userId: 1, food: [{ id: 1, foodName: '마라샹궈', price: 15000 }], status: '주문 확정' };
         }
         if (orderId === 2) {
-            return { id: 1, UserId: 1, food: [{ id: 1, foodName: '마라샹궈', price: 15000 }], status: '배달 중' };
+            return { id: 1, userId: 1, food: [{ id: 1, foodName: '마라샹궈', price: 15000 }], status: '배달 중' };
         }
         if (orderId === 3) {
-            return { id: 1, UserId: 1, food: [{ id: 1, foodName: '마라샹궈', price: 15000 }], status: '배달 완료' };
+            return { id: 1, userId: 1, food: [{ id: 1, foodName: '마라샹궈', price: 15000 }], status: '배달 완료' };
         }
         if (orderId === 4) {
-            return { id: 1, UserId: 1, food: [{ id: 1, foodName: '마라샹궈', price: 15000 }], status: '주문 접수' };
+            return { id: 1, userId: 1, food: [{ id: 1, foodName: '마라샹궈', price: 15000 }], status: '주문 접수' };
         }
         if (orderId === 999) {
             return;
@@ -35,8 +35,8 @@ export class FakeOrderRepository {
     getOrderByUserId(userId: number) {
         if (userId === 1) {
             return [
-                { id: 1, UserId: 1, food: [{ id: 1, foodName: '마라샹궈', price: 15000 }], status: '주문 확정', createdAt: new Date('2023-01-02') },
-                { id: 2, UserId: 1, food: [{ id: 1, foodName: '마라샹궈', price: 15000 }], status: '배달 중', createdAt: new Date('2023-04-02') },
+                { id: 1, userId: 1, food: [{ id: 1, foodName: '마라샹궈', price: 15000 }], status: '주문 확정', createdAt: new Date('2023-01-02') },
+                { id: 2, userId: 1, food: [{ id: 1, foodName: '마라샹궈', price: 15000 }], status: '배달 중', createdAt: new Date('2023-04-02') },
             ];
         }
     }
@@ -47,19 +47,19 @@ export class FakeOrderRepository {
 
     getOrderByOrderId(orderId: number) {
         if (orderId === 1) {
-            return { id: 1, UserId: 1, food: [{ id: 1, foodName: '마라샹궈', price: 15000 }], status: '배달 완료', review: '맛있다맛있어' };
+            return { id: 1, userId: 1, food: [{ id: 1, foodName: '마라샹궈', price: 15000 }], status: '배달 완료', review: '맛있다맛있어' };
         }
         if (orderId === 2) {
-            return { id: 2, UserId: 1, food: [{ id: 1, foodName: '마라샹궈', price: 15000 }], status: '주문 접수', review: '' };
+            return { id: 2, userId: 1, food: [{ id: 1, foodName: '마라샹궈', price: 15000 }], status: '주문 접수', review: '' };
         }
         if (orderId === 3) {
-            return { id: 3, UserId: 1, food: [{ id: 1, foodName: '마라샹궈', price: 15000 }], status: '배달 중', review: '' };
+            return { id: 3, userId: 1, food: [{ id: 1, foodName: '마라샹궈', price: 15000 }], status: '배달 중', review: '' };
         }
         if (orderId === 4) {
-            return { id: 4, UserId: 1, food: [{ id: 1, foodName: '마라샹궈', price: 15000 }], status: '주문 확정', review: '' };
+            return { id: 4, userId: 1, food: [{ id: 1, foodName: '마라샹궈', price: 15000 }], status: '주문 확정', review: '' };
         }
         if (orderId === 5) {
-            return { id: 5, UserId: 1, food: [{ id: 1, foodName: '마라샹궈', price: 15000 }], status: '배달 완료', review: '' };
+            return { id: 5, userId: 1, food: [{ id: 1, foodName: '마라샹궈', price: 15000 }], status: '배달 완료', review: '' };
         }
     }
 }
@@ -227,7 +227,7 @@ describe('OrderService', () => {
             const nowDate = new Date('2023-05-01');
             const userId = 1;
             const result = await orderService.getManyOrderHistory(nowDate, userId);
-            expect(result).toEqual([{ id: 2, UserId: 1, food: [{ id: 1, foodName: '마라샹궈', price: 15000 }], status: '배달 중', createdAt: new Date('2023-04-02') }]);
+            expect(result).toEqual([{ id: 2, userId: 1, food: [{ id: 1, foodName: '마라샹궈', price: 15000 }], status: '배달 중', createdAt: new Date('2023-04-02') }]);
         });
     });
 

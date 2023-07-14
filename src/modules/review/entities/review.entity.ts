@@ -11,8 +11,8 @@ export class Review {
     @Column('int', { name: 'OrderId' })
     OrderId: number;
 
-    @Column('int', { name: 'UserId' })
-    UserId: number;
+    @Column('int', { name: 'userId' })
+    userId: number;
 
     @Column('int', { name: 'DeliveryId' })
     DeliveryId: number;
@@ -27,7 +27,7 @@ export class Review {
         onDelete: 'CASCADE',
         onUpdate: 'CASCADE',
     })
-    @JoinColumn([{ name: 'UserId', referencedColumnName: 'id' }])
+    @JoinColumn([{ name: 'userId', referencedColumnName: 'id' }])
     User: User;
 
     @ManyToOne(() => Order, (order) => order.Review, {

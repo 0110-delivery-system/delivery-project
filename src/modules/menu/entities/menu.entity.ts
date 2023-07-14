@@ -6,7 +6,7 @@ export class Menu {
     @PrimaryGeneratedColumn({ type: 'int', name: 'id' })
     id: number;
 
-    @Column('int', { name: 'StoreId' })
+    @Column('int', { name: 'storeId' })
     storeId: number;
 
     @Column('varchar', { name: 'name' })
@@ -16,6 +16,6 @@ export class Menu {
     price: number;
 
     @ManyToOne(() => Store, (store) => store.Menu, { onDelete: 'CASCADE', onUpdate: 'CASCADE' })
-    @JoinColumn([{ name: 'StoreId', referencedColumnName: 'id' }])
-    store: Store;
+    @JoinColumn([{ name: 'storeId', referencedColumnName: 'id' }])
+    Store: Store;
 }

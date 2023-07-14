@@ -52,7 +52,7 @@ export class DeliveryRepository implements IDeliveryRepository {
             return null;
         }
         const deliveryInfo = {
-            userId: delivery.UserId,
+            userId: delivery.userId,
             status: delivery.status,
             deliveryId: delivery.id,
             receiver: delivery.receiver,

@@ -13,6 +13,7 @@ export class OrderService {
         }
         for (let i = 0; i < menuList.length; i++) {
             const menu = await this.orderRepository.findMenuByMenuId(menuList[i], storeId);
+            console.log(menu);
             if (!menu) {
                 throw new BadRequestException('존재하지 않는 메뉴입니다');
             }

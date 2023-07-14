@@ -15,7 +15,7 @@ export class StoreRepository implements IStoreRepository {
         const store = this.storeRepository.create();
         store.name = storeName;
         store.address = address;
-        store.OwnerId = ownerId;
+        store.ownerId = ownerId;
 
         await this.storeRepository.save(store);
     }
@@ -25,7 +25,7 @@ export class StoreRepository implements IStoreRepository {
     }
 
     async findOneById(ownerId: number) {
-        return await this.storeRepository.findOne({ where: { OwnerId: ownerId } });
+        return await this.storeRepository.findOne({ where: { ownerId: ownerId } });
     }
 
     async getStore(storeId: number) {

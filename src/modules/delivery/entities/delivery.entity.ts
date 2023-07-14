@@ -8,8 +8,8 @@ export class Delivery {
     @PrimaryGeneratedColumn({ type: 'int', name: 'id' })
     id: number;
 
-    @Column('int', { name: 'UserId' })
-    UserId: number;
+    @Column('int', { name: 'userId' })
+    userId: number;
 
     @Column('varchar', { name: 'status' })
     status: string;
@@ -24,7 +24,7 @@ export class Delivery {
         onDelete: 'CASCADE',
         onUpdate: 'CASCADE',
     })
-    @JoinColumn([{ name: 'UserId', referencedColumnName: 'id' }])
+    @JoinColumn([{ name: 'userId', referencedColumnName: 'id' }])
     User: User;
 
     @JoinColumn([{ name: 'OrderId', referencedColumnName: 'id' }])

@@ -12,15 +12,15 @@ export class BookmarkRepository implements IBookmarkRepository {
     ) {}
 
     async getManyUserBookmark(userId: number): Promise<number[]> {
-        const bookmarks = await this.bookmarkModel.find({ where: { UserId: userId } });
-        const storeIds = bookmarks.map((bookmark) => bookmark.StoreId);
+        const bookmarks = await this.bookmarkModel.find({ where: { userId: userId } });
+        const storeIds = bookmarks.map((bookmark) => bookmark.storeId);
         return storeIds;
     }
 
     async saveFavoriteStore(userId: number, storeId: number): Promise<boolean> {
         const bookmark = this.bookmarkModel.create();
-        bookmark.UserId = userId;
-        bookmark.StoreId = storeId;
+        bookmark.userId = userId;
+        bookmark.storeId = storeId;
         try {
             await this.bookmarkModel.save(bookmark);
             return true;
@@ -31,7 +31,7 @@ export class BookmarkRepository implements IBookmarkRepository {
     }
 
     async removeFavoriteStore(userId: number, storeId: number): Promise<boolean> {
-        const deleteResult = await this.bookmarkModel.delete({ UserId: userId, StoreId: storeId });
+        const deleteResult = await this.bookmarkModel.delete({ userId: userId, storeId: storeId });
         return deleteResult.affected > 0;
     }
 }
