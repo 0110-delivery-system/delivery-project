@@ -13,8 +13,9 @@ export class OrderRepository {
         private menuRepository: Repository<Menu>
     ) {}
 
-    async createOrder(userId: number, menu: Menu): Promise<Order> {
+    async createOrder(userId: number, menu: Menu, orderId: number): Promise<Order> {
         const order = this.orderRepository.create();
+        order.id = orderId;
         order.userId = userId;
         order.storeId = menu.storeId;
         order.food = JSON.stringify(menu);

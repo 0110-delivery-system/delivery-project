@@ -2,6 +2,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { OrderRepository } from './order.repository';
 import { Inject } from '@nestjs/common';
 import { CreateOrderDto } from './dto/create-order.dto';
+import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class OrderService {
@@ -29,8 +30,9 @@ export class OrderService {
         }
 
         for (let i = 0; i < menuIds.length; i++) {
+            const orderId = uuidv4();
             const menu = await this.orderRepository.findMenuByMenuId(menuIds[i], storeId);
-            await this.orderRepository.createOrder(userId, menu);
+            await this.orderRepository.createOrder(userId, menu, orderId);
         }
         return;
     }

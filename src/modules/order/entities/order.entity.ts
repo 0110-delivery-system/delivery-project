@@ -1,11 +1,11 @@
 import { Review } from 'src/modules/review/entities/review.entity';
 import { Store } from 'src/modules/store/entities/store.entity';
 import { User } from 'src/modules/user/entities/user.entity';
-import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryColumn } from 'typeorm';
 
 @Entity('Order')
 export class Order {
-    @PrimaryGeneratedColumn({ type: 'int', name: 'id' })
+    @PrimaryColumn({ type: 'uuid', name: 'id' })
     id: number;
 
     @Column('int', { name: 'userId' })
