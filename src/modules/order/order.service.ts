@@ -1,17 +1,19 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { FakeOrderRepository } from './order.service.spec';
+import { Inject } from '@nestjs/common';
+import { CreateOrderDto, OrderListDto } from './dto/create-order.dto';
+import { Order } from './entities/order.entity';
+import { IOrderRepository } from './order.IOrderRepository';
 
 @Injectable()
 export class OrderService {
-    orderRepository: FakeOrderRepository;
+    constructor(@Inject(IOrderRepository) private orderRepository: IOrderRepository) {}
 
-    async validateOrderInfo(menuList, storeId: number) {
-        if (menuList.length > 10) {
+    async validateOrderInfo(order: OrderListDto[], storeId: number) {
+        if (order.length > 10) {
             throw new BadRequestException('메뉴가 10개를 초과하였습니다');
         }
-
-        for (let i = 0; i < menuList.length; i++) {
-            const menu = await this.orderRepository.findMenuByMenuId(menuList[i].id, storeId);
+        for (const orderItem of order) {
+            const menu = await this.orderRepository.findMenuByMenuId(orderItem.menuId, storeId);
             if (!menu) {
                 throw new BadRequestException('존재하지 않는 메뉴입니다');
             }
@@ -19,22 +21,23 @@ export class OrderService {
         return true;
     }
 
-    async createOrder(storeId: number, menuList) {
-        const validationResult = await this.validateOrderInfo(menuList, storeId);
+    async createOrder(storeId: number, body: CreateOrderDto) {
+        const { userId, orderList } = body;
+        const validationResult = await this.validateOrderInfo(orderList, storeId);
         if (!validationResult) {
             return validationResult;
         }
-        await this.orderRepository.createOrder(storeId, menuList);
+        await this.orderRepository.createOrder(userId, storeId, orderList);
         return;
     }
 
-    async cancleOrder(orderId: number) {
+    async cancelOrder(orderId: number) {
         const order = await this.orderRepository.getOrderStatus(orderId);
         if (!order) {
             throw new BadRequestException('존재하지 않는 주문입니다');
         }
 
-        const validationOrderStatus = this.checkOrderStatus_cancle(order.status);
+        const validationOrderStatus = this.checkOrderStatus_cancel(order.status);
         if (!validationOrderStatus) {
             return validationOrderStatus;
         }
@@ -43,17 +46,17 @@ export class OrderService {
         return;
     }
 
-    checkOrderStatus_cancle(orderStatus: string) {
-        if (orderStatus === '주문 확정') {
-            throw new BadRequestException('주문 확정된 주문은 취소할 수 없습니다');
+    checkOrderStatus_cancel(orderStatus: string) {
+        switch (orderStatus) {
+            case 'CONFIRMED_ORDER':
+                throw new BadRequestException('주문 확정된 주문은 취소할 수 없습니다');
+            case 'DELIVERY_START':
+                throw new BadRequestException('배달 중인 주문은 취소할 수 없습니다');
+            case 'COMPLETED_DELIVERY':
+                throw new BadRequestException('배달이 완료된 주문은 취소할 수 없습니다');
+            default:
+                return true;
         }
-        if (orderStatus === '배달 중') {
-            throw new BadRequestException('배달 중인 주문은 취소할 수 없습니다');
-        }
-        if (orderStatus === '배달 완료') {
-            throw new BadRequestException('배달이 완료된 주문은 취소할 수 없습니다');
-        }
-        return true;
     }
 
     createNowDate() {
@@ -62,14 +65,14 @@ export class OrderService {
 
     async getManyOrderHistory(nowDate: Date, userId: number) {
         const orderList = await this.orderRepository.getOrderByUserId(userId);
-
-        let confirmOrderList = [];
-        for (let i = 0; i < orderList.length; i++) {
-            const result = this.checkAfterThreeMonth(nowDate, orderList[i].createdAt);
+        const confirmOrderList: Order[] = [];
+        for (const order of orderList) {
+            const result = this.checkAfterThreeMonth(nowDate, order.createdAt);
             if (result === true) {
-                confirmOrderList.push(orderList[i]);
+                confirmOrderList.push(order);
             }
         }
+
         return confirmOrderList;
     }
 
@@ -86,7 +89,7 @@ export class OrderService {
 
     async checkReviewAvailability(orderId: number) {
         const order = await this.orderRepository.getOrderByOrderId(orderId);
-        if (order.review) {
+        if (order.Review) {
             throw new BadRequestException('이미 리뷰를 작성한 주문입니다');
         }
         if (order.status !== '배달 완료') {
@@ -95,12 +98,18 @@ export class OrderService {
         return true;
     }
 
-    async confirmOrder(orderId: number) {
-        const order = await this.orderRepository.getOrderByOrderId(orderId);
-        if (order.status !== '주문 접수') {
-            throw new BadRequestException('주문 접수 상태가 아닙니다');
+    async updateOrderStatus(orderId: number, status: string) {
+        const order = await this.orderRepository.getOrderByOrderId(Number(orderId));
+        if (!order) {
+            throw new BadRequestException('존재하지 않는 주문입니다');
         }
-        return true;
+        if (order.status !== 'ACCEPTED_ORDER' && status === 'CONFIRMED_ORDER') {
+            throw new BadRequestException('주문 접수 상태가 아닙니다');
+        } else if (order.status === 'CONFIRMED_ORDER' && status === 'CANCEL_ORDER') {
+            throw new BadRequestException('주문 확정 상태는 취소할 수 없습니다');
+        } else {
+            await this.orderRepository.updateOrderStatus(orderId, status);
+        }
     }
 
     async checkIsOrder(orderId: number) {

@@ -1,19 +1,34 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Store } from './entities/store.entity';
+import { IStoreRepository } from './store.IStoreRepository';
 
 @Injectable()
-export class StoreRepository {
-    saveReview(orderId: number, userId: number, review: any) {
-        return true;
+export class StoreRepository implements IStoreRepository {
+    constructor(
+        @InjectRepository(Store)
+        private storeRepository: Repository<Store>
+    ) {}
+
+    async createStore(storeName: string, address: string, ownerId: number) {
+        const store = this.storeRepository.create();
+        store.name = storeName;
+        store.address = address;
+        store.ownerId = ownerId;
+
+        await this.storeRepository.save(store);
     }
-    findOneReview(userId: number, orderId: number) {
-        return true;
+
+    async getMany() {
+        return await this.storeRepository.find();
     }
-    getStore(storeId: number) {
-        return {
-            id: 1,
-            ownerId: 1,
-            storeName: '다른 수프집1',
-            address: '주소',
-        };
+
+    async findOneById(ownerId: number) {
+        return await this.storeRepository.findOne({ where: { ownerId: ownerId } });
+    }
+
+    async getStore(storeId: number) {
+        return await this.storeRepository.findOne({ where: { id: storeId } });
     }
 }

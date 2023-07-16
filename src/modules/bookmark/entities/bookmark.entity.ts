@@ -7,23 +7,23 @@ export class Bookmark {
     @PrimaryGeneratedColumn({ type: 'int', name: 'id' })
     id: number;
 
-    @Column('int', { name: 'UserId' })
-    UserId: number;
+    @Column('int', { name: 'userId' })
+    userId: number;
 
-    @Column('int', { name: 'StoreId' })
-    StoreId: number;
+    @Column('int', { name: 'storeId' })
+    storeId: number;
 
     @ManyToOne(() => User, (user) => user.Bookmark, {
         onDelete: 'CASCADE',
         onUpdate: 'CASCADE',
     })
-    @JoinColumn([{ name: 'UserId', referencedColumnName: 'id' }])
+    @JoinColumn([{ name: 'userId', referencedColumnName: 'id' }])
     User: User;
 
     @ManyToOne(() => Store, (store) => store.Bookmark, {
         onDelete: 'CASCADE',
         onUpdate: 'CASCADE',
     })
-    @JoinColumn([{ name: 'StoreId', referencedColumnName: 'id' }])
+    @JoinColumn([{ name: 'storeId', referencedColumnName: 'id' }])
     Store: Store;
 }

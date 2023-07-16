@@ -1,35 +1,36 @@
 import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { IDeliveryRepository } from './delivery.IDeliveryRepository';
-import { DeliveryRepository } from './delivery.repository';
+import { CreateDeliveryDto } from './dto/create-delivery.dto';
 
 @Injectable()
 export class DeliveryService {
     constructor(@Inject(IDeliveryRepository) private deliveryRepository: IDeliveryRepository) {}
 
-    async validateCreateDelivery(deliveryInfo: { deliveryAddress: string; receiver: string }) {
-        if (!deliveryInfo.deliveryAddress) {
+    async validatecreateDelivery(deliveryInfo: CreateDeliveryDto) {
+        const { receiver, deliveryAddress } = deliveryInfo;
+        if (!deliveryAddress) {
             throw new BadRequestException('배달 주소지가 없습니다.');
         }
-        if (!deliveryInfo.receiver) {
+        if (!receiver) {
             throw new BadRequestException('수령인이 없습니다.');
         }
         return true;
     }
 
-    async createDelivery(orderId: number, deliveryInfo: any) {
-        const validateResult = await this.validateCreateDelivery(deliveryInfo);
+    async createDelivery(orderId: number, deliveryInfo: CreateDeliveryDto) {
+        const validateResult = await this.validatecreateDelivery(deliveryInfo);
         if (validateResult) {
-            const result = await this.deliveryRepository.saveDeliveryInfo(orderId, deliveryInfo);
+            const result = await this.deliveryRepository.createDelivery(orderId, deliveryInfo);
             return result;
         }
     }
 
     async validateStartDelivery(deliveryId: number) {
         const result = await this.deliveryRepository.findOneDeliveryStatus(deliveryId);
-        if (result.status === 'START_DELIVERY') {
+        if (result === 'START_DELIVERY') {
             throw new BadRequestException('이미 배달이 출발했습니다.');
         }
-        if (result.status === 'COMPLETE_DELIVERY') {
+        if (result === 'COMPLETE_DELIVERY') {
             throw new BadRequestException('이미 배달이 완료되었습니다.');
         }
         return true;
@@ -47,10 +48,10 @@ export class DeliveryService {
 
     async validateCompleteDelivery(deliveryId: number) {
         const result = await this.deliveryRepository.findOneDeliveryStatus(deliveryId);
-        if (result.status === 'WAIT_DELIVERY') {
+        if (result === 'WAIT_DELIVERY') {
             throw new BadRequestException('아직 배달이 출발하지 않았습니다.');
         }
-        if (result.status === 'COMPLETE_DELIVERY') {
+        if (result === 'COMPLETE_DELIVERY') {
             throw new BadRequestException('이미 배달이 완료되었습니다.');
         }
         return true;
