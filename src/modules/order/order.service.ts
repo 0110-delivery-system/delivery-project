@@ -98,12 +98,18 @@ export class OrderService {
         return true;
     }
 
-    async confirmOrder(orderId: number) {
-        const order = await this.orderRepository.getOrderByOrderId(orderId);
-        if (order.status !== '주문 접수') {
-            throw new BadRequestException('주문 접수 상태가 아닙니다');
+    async updateOrderStatus(orderId: number, status: string) {
+        const order = await this.orderRepository.getOrderByOrderId(Number(orderId));
+        if (!order) {
+            throw new BadRequestException('존재하지 않는 주문입니다');
         }
-        return true;
+        if (order.status !== 'ACCEPTED_ORDER' && status === 'CONFIRMED_ORDER') {
+            throw new BadRequestException('주문 접수 상태가 아닙니다');
+        } else if (order.status === 'CONFIRMED_ORDER' && status === 'CANCEL_ORDER') {
+            throw new BadRequestException('주문 확정 상태는 취소할 수 없습니다');
+        } else {
+            await this.orderRepository.updateOrderStatus(orderId, status);
+        }
     }
 
     async checkIsOrder(orderId: number) {

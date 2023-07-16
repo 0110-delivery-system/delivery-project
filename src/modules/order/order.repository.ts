@@ -19,7 +19,7 @@ export class OrderRepository {
         order.userId = userId;
         order.storeId = storeId;
         order.food = JSON.stringify(orderList);
-        order.status = 'ACCEPT_ORDER';
+        order.status = 'ACCEPTED_ORDER';
         order.Review = null;
         order.createdAt = new Date();
         order.paymentId = 'helloworld';
@@ -39,6 +39,10 @@ export class OrderRepository {
         return order;
     }
 
+    async updateOrderStatus(orderId, status): Promise<void> {
+        await this.orderRepository.update(orderId, { status: status });
+    }
+
     async getOrderByUserId(userId: number): Promise<Order[]> {
         const orders = await this.orderRepository.find({ where: { userId: userId } });
         return orders;
@@ -50,6 +54,6 @@ export class OrderRepository {
 
     async getOrderByOrderId(orderId: number): Promise<Order | undefined> {
         const order = await this.orderRepository.findOne({ where: { id: orderId } });
-        return order;
+        return order ?? undefined;
     }
 }

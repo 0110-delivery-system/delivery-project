@@ -11,14 +11,19 @@ export class OrderController {
         return await this.orderService.createOrder(storeId, body);
     }
 
-    @Delete(':orderId')
-    async cancelOrder(@Param('orderId') orderId: number) {
-        return await this.orderService.cancelOrder(orderId);
-    }
-
     @Get(':userId/history')
     async getOrderHistory(@Param('userId') userId: number) {
         const nowDate = new Date();
         return await this.orderService.getManyOrderHistory(nowDate, userId);
+    }
+
+    @Get(':orderId/confirm')
+    async confirmOrder(@Param('orderId') orderId: number) {
+        return await this.orderService.updateOrderStatus(orderId, 'CONFIRMED_ORDER');
+    }
+
+    @Get(':orderId/cancel')
+    async cancelOrder_byUser(@Param('orderId') orderId: number) {
+        return await this.orderService.updateOrderStatus(orderId, 'CANCEL_ORDER');
     }
 }
