@@ -1,8 +1,5 @@
-import { Review } from 'src/modules/review/entities/review.entity';
-import { User } from 'src/modules/user/entities/user.entity';
+import { Column, Entity, PrimaryGeneratedColumn, ManyToOne, JoinColumn, OneToOne } from 'typeorm';
 import { Order } from 'src/modules/order/entities/order.entity';
-import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
-
 @Entity('Delivery')
 export class Delivery {
     @PrimaryGeneratedColumn({ type: 'int', name: 'id' })
@@ -22,4 +19,8 @@ export class Delivery {
 
     @Column('varchar', { name: 'address' })
     address: string;
+
+    @OneToOne(() => Order, (order) => order.Delivery)
+    @JoinColumn({ name: 'orderId', referencedColumnName: 'id' })
+    Order: Order;
 }

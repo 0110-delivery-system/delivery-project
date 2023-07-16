@@ -10,7 +10,7 @@ export class UserRepository {
         private userRepository: Repository<User>
     ) {}
 
-    async findUserByEmail(email: string): Promise<User | undefined> {
+    async findUserByEmail(email: string): Promise<User | null> {
         return this.userRepository.findOne({ where: { email } });
     }
 
@@ -23,7 +23,8 @@ export class UserRepository {
         await this.userRepository.save(user);
     }
 
-    async findUserById(userId: number): Promise<User | undefined> {
-        return this.userRepository.findOne({ where: { id: userId } });
+    async findUserById(userId: number): Promise<User | null> {
+        const user = await this.userRepository.findOne({ where: { id: Number(userId) } });
+        return user;
     }
 }

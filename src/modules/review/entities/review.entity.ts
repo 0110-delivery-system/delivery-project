@@ -1,6 +1,6 @@
 import { Order } from 'src/modules/order/entities/order.entity';
 import { User } from 'src/modules/user/entities/user.entity';
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity('Review')
 export class Review {
@@ -12,9 +12,6 @@ export class Review {
 
     @Column('int', { name: 'userId' })
     userId: number;
-
-    @Column('int', { name: 'deliveryId' })
-    deliveryId: number;
 
     @Column('varchar', { name: 'title' })
     title: string;
@@ -29,10 +26,7 @@ export class Review {
     @JoinColumn([{ name: 'userId', referencedColumnName: 'id' }])
     User: User;
 
-    @ManyToOne(() => Order, (order) => order.Review, {
-        onDelete: 'CASCADE',
-        onUpdate: 'CASCADE',
-    })
+    @OneToOne(() => Order, (order) => order.Review)
     @JoinColumn([{ name: 'orderId', referencedColumnName: 'id' }])
     Order: Order;
 }

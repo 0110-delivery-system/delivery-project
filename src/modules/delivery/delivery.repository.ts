@@ -56,8 +56,6 @@ export class DeliveryRepository implements IDeliveryRepository {
             deliveryId: delivery.id,
             receiver: delivery.receiver,
             deliveryAddress: delivery.address,
-
-            // time: delivery.createdAt.toISOString(),
         };
 
         return deliveryInfo;

@@ -3,28 +3,28 @@ import { IReviewRepository } from './review.IRepository';
 import { Injectable } from '@nestjs/common';
 import { Review } from './entities/review.entity';
 import { Repository } from 'typeorm';
-import { CreatereviewDto } from './dto/create-review.dto';
+import { CreateReviewDto } from './dto/create-review.dto';
 
 @Injectable()
 export class ReviewRepository implements IReviewRepository {
     constructor(
         @InjectRepository(Review)
-        private reviewModel: Repository<Review>
+        private reviewRepository: Repository<Review>
     ) {}
 
-    async saveReview(orderId: number, userId: number, review: CreatereviewDto): Promise<Review> {
-        const newReview = this.reviewModel.create();
+    async saveReview(userId: number, orderId: number, review: CreateReviewDto): Promise<Review> {
+        const newReview = this.reviewRepository.create();
         newReview.orderId = orderId;
         newReview.userId = userId;
         newReview.title = review.title;
         newReview.content = review.content;
 
-        const savedReview = await this.reviewModel.save(newReview);
+        const savedReview = await this.reviewRepository.save(newReview);
         return savedReview;
     }
 
-    async findOneReview(userId: number, orderId: number): Promise<Review | null> {
-        const review = await this.reviewModel.findOne({ where: { userId: userId, orderId: orderId } });
+    async findOneReview(reviewId: number): Promise<Review | null> {
+        const review = await this.reviewRepository.findOne({ where: { id: reviewId } });
         return review || null;
     }
 }
