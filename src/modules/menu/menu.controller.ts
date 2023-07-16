@@ -7,7 +7,7 @@ import { UpdateMenuDto } from './dto/update-menu.dto';
 export class MenuController {
     constructor(private readonly menuService: MenuService) {}
 
-    @Post('/:storeId')
+    @Post(':storeId')
     addMenu(@Param('storeId') storeId: number, @Body() createMenuDto: CreateMenuDto) {
         return this.menuService.addMenu(storeId, createMenuDto);
     }
@@ -17,18 +17,18 @@ export class MenuController {
         return this.menuService.getManyMenu(storeId);
     }
 
-    @Get('')
+    @Get()
     getMenu(@Query('storeId') storeId: number, @Query('menuId') menuId: number) {
         return this.menuService.getMenu(storeId, menuId);
     }
 
-    @Put(':menuId')
-    updateMenu(@Param('storeId') storeId: number, @Param('menuId') menuId: number, @Body() updateMenuDto: UpdateMenuDto) {
+    @Put('')
+    updateMenu(@Query('storeId') storeId: number, @Query('menuId') menuId: number, @Body() updateMenuDto: UpdateMenuDto) {
         return this.menuService.updateMenu(storeId, menuId, updateMenuDto);
     }
 
-    @Delete(':menuId')
-    removeMenu(@Param('storeId') storeId: number, @Param('menuId') menuId: number) {
+    @Delete('')
+    removeMenu(@Query('storeId') storeId: number, @Query('menuId') menuId: number) {
         return this.menuService.removeMenu(storeId, menuId);
     }
 }

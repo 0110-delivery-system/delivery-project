@@ -57,7 +57,7 @@ export class MenuService {
 
     async validateUpdateMenu(storeId, menuId, updateMenu) {
         const existingMenus = await this.getManyMenu(storeId);
-        const existingMenu = existingMenus.find((menu) => menu.id === updateMenu.id);
+        const existingMenu = existingMenus.find((menu) => menu.id === Number(menuId));
         const isExistingStore = await this.storeRepository.getStore(storeId);
 
         if (existingMenu === undefined) {
@@ -92,8 +92,9 @@ export class MenuService {
 
     async validateDeleteMenu(storeId, menuId) {
         const existingMenus = await this.getManyMenu(storeId);
-        const existingMenu = existingMenus.find((menu) => menu.id === menuId);
+        const existingMenu = existingMenus.find((menu) => menu.id === parseInt(menuId));
         const isExistingStore = await this.storeRepository.getStore(storeId);
+
         if (!existingMenu) {
             throw new BadRequestException('존재하지 않는 메뉴입니다.');
         } else if (!isExistingStore) {
