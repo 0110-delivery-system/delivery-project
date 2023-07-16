@@ -1,30 +1,27 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
+import { IStoreRepository } from './store.IStoreRepository';
+import { Inject } from '@nestjs/common';
 import { CreateStoreDto } from './dto/create-store.dto';
-import { UpdateStoreDto } from './dto/update-store.dto';
 
 @Injectable()
 export class StoreService {
-    create(createStoreDto: CreateStoreDto) {
-        return 'This action adds a new store';
+    constructor(@Inject(IStoreRepository) private storeRepository: IStoreRepository) {}
+
+    async createStore(body: CreateStoreDto) {
+        console.log(body);
+        const { storeName, address, ownerId } = body;
+        const existOwnerStore = await this.getStore(ownerId);
+        if (existOwnerStore) throw new BadRequestException('한개의 가게만 등록이 가능합니다.');
+        await this.storeRepository.createStore(storeName, address, ownerId);
+        return;
     }
 
-    findAll() {
-        return `This action returns all store`;
+    async getManyStore() {
+        const storeList = await this.storeRepository.getMany();
+        return storeList;
     }
 
-    getStore(storeId: number) {
-        return null;
-    }
-
-    findOne(id: number) {
-        return `This action returns a #${id} store`;
-    }
-
-    update(id: number, updateStoreDto: UpdateStoreDto) {
-        return `This action updates a #${id} store`;
-    }
-
-    remove(id: number) {
-        return `This action removes a #${id} store`;
+    async getStore(ownerId: number) {
+        return await this.storeRepository.findOneById(ownerId);
     }
 }

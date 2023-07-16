@@ -4,12 +4,13 @@ import { MenuController } from './menu.controller';
 import { MenuRepository } from './menu.repository';
 import { StoreModule } from '../store/store.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Delivery } from '../delivery/entities/delivery.entity';
 import { Menu } from './entities/menu.entity';
+import { IMenuRepository } from './menu.IRepository';
 
 @Module({
     imports: [TypeOrmModule.forFeature([Menu]), StoreModule],
     controllers: [MenuController],
-    providers: [MenuService, MenuRepository],
+    providers: [MenuService, { provide: IMenuRepository, useClass: MenuRepository }],
+    exports: [IMenuRepository],
 })
 export class MenuModule {}

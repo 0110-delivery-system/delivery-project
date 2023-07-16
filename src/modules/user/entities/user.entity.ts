@@ -15,8 +15,11 @@ export class User {
     @Column('varchar', { name: 'password' })
     password: string;
 
-    @OneToMany(() => Delivery, (delivery) => delivery.User)
-    Delivery: Delivery[];
+    @Column('varchar', { name: 'name' })
+    name: string;
+
+    // @OneToMany(() => Delivery, (delivery) => delivery.User)
+    // Delivery: Delivery[];
 
     @OneToMany(() => Review, (review) => review.User)
     Review: Review;

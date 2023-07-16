@@ -1,34 +1,25 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Post, Get } from '@nestjs/common';
 import { StoreService } from './store.service';
+import { Body } from '@nestjs/common';
 import { CreateStoreDto } from './dto/create-store.dto';
-import { UpdateStoreDto } from './dto/update-store.dto';
+import { BadRequestException } from '@nestjs/common';
 
 @Controller('store')
 export class StoreController {
     constructor(private readonly storeService: StoreService) {}
 
-    @Post()
-    create(@Body() createStoreDto: CreateStoreDto) {
-        return this.storeService.create(createStoreDto);
+    @Post('createStore')
+    async createStore(@Body() body: CreateStoreDto) {
+        try {
+            await this.storeService.createStore(body);
+            return { message: 'Store created successfully' };
+        } catch (error) {
+            throw new BadRequestException('Failed to create store');
+        }
     }
 
-    @Get()
-    findAll() {
-        return this.storeService.findAll();
-    }
-
-    @Get(':id')
-    findOne(@Param('id') id: string) {
-        return this.storeService.findOne(+id);
-    }
-
-    @Patch(':id')
-    update(@Param('id') id: string, @Body() updateStoreDto: UpdateStoreDto) {
-        return this.storeService.update(+id, updateStoreDto);
-    }
-
-    @Delete(':id')
-    remove(@Param('id') id: string) {
-        return this.storeService.remove(+id);
+    @Get('getManyStore')
+    async getManyStore() {
+        return await this.storeService.getManyStore();
     }
 }

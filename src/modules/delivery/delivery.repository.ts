@@ -1,62 +1,63 @@
+import { CreateDeliveryDto } from './dto/create-delivery.dto';
+import { IOrderRepository } from './../order/order.IOrderRepository';
+import { InjectRepository } from '@nestjs/typeorm';
 import { IDeliveryRepository } from './delivery.IDeliveryRepository';
-import { Injectable } from '@nestjs/common';
+import { Injectable, BadRequestException, Inject } from '@nestjs/common';
+import { Repository } from 'typeorm';
+import { Delivery } from './entities/delivery.entity';
 
 @Injectable()
 export class DeliveryRepository implements IDeliveryRepository {
-    saveDeliveryInfo(orderId: number, deliveryInfo: any) {
-        if (orderId === 1) {
-            return {
-                deliveryId: 1,
-                status: 'WAIT_DELIVERY',
-                receiver: '김철수',
-                deliveryAddress: '서울시 강남구',
-            };
-        } else if (orderId === 2) {
-            return {
-                deliveryId: 2,
-                status: 'START_DELIVERY',
-                receiver: '김철수',
-                deliveryAddress: '서울시 강남구',
-            };
+    constructor(@InjectRepository(Delivery) private deliveryRepository: Repository<Delivery>, @Inject(IOrderRepository) private orderRepository: IOrderRepository) {}
+
+    async createDelivery(orderId: number, deliveryInfo: CreateDeliveryDto) {
+        const order = await this.orderRepository.getOrderByOrderId(orderId);
+        if (!order) {
+            throw new BadRequestException(`존재 하지 않는 주문입니다.`);
         }
+
+        const { receiver, deliveryAddress, userId } = deliveryInfo;
+        const delivery = this.deliveryRepository.create();
+        delivery.userId = userId;
+        delivery.status = 'WAIT_DELIVERY';
+        delivery.orderId = orderId;
+        delivery.receiver = receiver;
+        delivery.address = deliveryAddress;
+        const createdDelivery = await this.deliveryRepository.save(delivery);
+        return createdDelivery;
     }
-    updateDeliveryStatus(deliveryId: number, status: string) {
-        if (deliveryId === 1) {
-            return {
-                status: 'START_DELIVERY',
-                deliveryId: 1,
-                receiver: '김철수',
-                deliveryAddress: '서울시 강남구',
-            };
-        } else if (deliveryId === 2) {
-            return true;
-        }
-    }
-    findOneDeliveryStatus(deliveryId: number) {
-        if (deliveryId === 1) {
-            return { status: 'WAIT_DELIVERY' };
-        } else if (deliveryId === 2) {
-            return { status: 'START_DELIVERY' };
-        } else if (deliveryId === 3) {
-            return { status: 'COMPLETE_DELIVERY' };
-        } else if (deliveryId === 4) {
+
+    async updateDeliveryStatus(deliveryId: number, status: string): Promise<Delivery | null> {
+        const delivery = await this.deliveryRepository.findOne({ where: { id: deliveryId } });
+        if (!delivery) {
             return null;
         }
+        delivery.status = status;
+        const updatedDelivery = await this.deliveryRepository.save(delivery);
+        return updatedDelivery;
     }
-    findOneDeliveryInfo(deliveryId: number) {
-        if (deliveryId === 1) {
-            return {
-                userId: 1,
-                status: 'START_DELIVERY',
-                deliveryId: 1,
-                receiver: '김철수',
-                deliveryAddress: '서울시 강남구',
-                review: null,
-                time: '2021-01-01',
-            };
-        } else if (deliveryId === 2) {
+
+    async findOneDeliveryStatus(deliveryId: number): Promise<string | null> {
+        const delivery = await this.deliveryRepository.findOne({ where: { id: deliveryId } });
+        if (!delivery) {
             return null;
         }
-        return;
+        return delivery.status;
+    }
+
+    async findOneDeliveryInfo(deliveryId: number): Promise<any | null> {
+        const delivery = await this.deliveryRepository.findOne({ where: { id: deliveryId } });
+        if (!delivery) {
+            return null;
+        }
+        const deliveryInfo = {
+            userId: delivery.userId,
+            status: delivery.status,
+            deliveryId: delivery.id,
+            receiver: delivery.receiver,
+            deliveryAddress: delivery.address,
+        };
+
+        return deliveryInfo;
     }
 }

@@ -1,10 +1,10 @@
-import { StoreRepository } from './../store/store.repository';
+import { IStoreRepository } from '../store/store.IStoreRepository';
 import { BookmarkRepository } from './bookmark.repository';
 import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 
 @Injectable()
 export class BookmarkService {
-    constructor(@Inject(BookmarkRepository) private bookmarkRepository: BookmarkRepository, @Inject(StoreRepository) private storeRepository: StoreRepository) {}
+    constructor(@Inject(BookmarkRepository) private bookmarkRepository: BookmarkRepository, @Inject(IStoreRepository) private storeRepository: IStoreRepository) {}
 
     async validateAddFavoriteStore(storeId: number, userId: number) {
         const store = await this.findOneStoreId(storeId);
@@ -42,9 +42,9 @@ export class BookmarkService {
 
     async validateSavedFavoriteStore(userId: number, storeId: number) {
         const bookmark = await this.bookmarkRepository.getManyUserBookmark(userId);
-        if (bookmark.includes(storeId)) {
+        if (bookmark.indexOf(storeId)) {
             return true;
-        } else if (!bookmark.includes(storeId)) {
+        } else if (!bookmark.indexOf(storeId)) {
             throw new BadRequestException('즐겨찾기 된 매장이 아닙니다.');
         }
     }
