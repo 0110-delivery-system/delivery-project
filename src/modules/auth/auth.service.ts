@@ -8,8 +8,8 @@ import { IUserRepository } from '../user/user.IRepository';
 export class AuthService {
     constructor(private jwtService: JwtService, @Inject(IUserRepository) private userRepository: IUserRepository) {}
 
-    async signUp(body: { email: string; password: string }) {
-        const { email, password } = body;
+    async signUp(body: { email: string; password: string; name: string }) {
+        const { email, password, name } = body;
         const validateEmailResult = await this.validateEmail(email);
         if (!validateEmailResult) {
             return validateEmailResult;
@@ -19,7 +19,7 @@ export class AuthService {
             return validatePasswordResult;
         }
         const hashedPassword = await bcrypt.hash(password, 10);
-        await this.userRepository.createUser(email, hashedPassword);
+        await this.userRepository.createUser(email, hashedPassword, name);
         return;
     }
 
@@ -27,7 +27,6 @@ export class AuthService {
         if (!email.includes('@')) {
             throw new BadRequestException('이메일 형식이 올바르지 않습니다');
         }
-
         const user = await this.userRepository.findUserByEmail(email);
         if (user) {
             throw new BadRequestException('이미 존재하는 이메일 입니다');
@@ -51,12 +50,10 @@ export class AuthService {
         if (!user) {
             throw new BadRequestException('계정 정보가 올바르지 않습니다');
         }
-
         const checkPassword = await bcrypt.compare(password, user.password);
         if (!checkPassword) {
             throw new BadRequestException('계정 정보가 올바르지 않습니다');
         }
-
         const access_token = this.jwtGenerate(user.id, 'access_token');
         const refresh_token = this.jwtGenerate(user.id, 'refresh_token');
         return { access_token, refresh_token };

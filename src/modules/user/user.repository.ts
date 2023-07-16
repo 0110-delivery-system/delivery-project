@@ -14,10 +14,11 @@ export class UserRepository {
         return this.userRepository.findOne({ where: { email } });
     }
 
-    async createUser(email: string, password: string): Promise<void> {
+    async createUser(email: string, password: string, name: string): Promise<void> {
         const user = new User();
         user.email = email;
         user.password = password;
+        user.name = name;
 
         await this.userRepository.save(user);
     }

@@ -7,7 +7,7 @@ import { BadRequestException } from '@nestjs/common';
 export class OwnerController {
     constructor(private readonly ownerService: OwnerService) {}
 
-    @Post('createOwner')
+    @Post('register')
     async createOwner(@Body() body: CreateOwnerDto) {
         try {
             await this.ownerService.createOwner(body);

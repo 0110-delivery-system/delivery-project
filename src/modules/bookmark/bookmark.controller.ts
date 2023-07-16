@@ -5,9 +5,10 @@ import { BookmarkService } from './bookmark.service';
 export class BookmarkController {
     constructor(private readonly bookmarkService: BookmarkService) {}
 
-    @Post('/:userId/store/:storeId')
+    @Post('/:userId/:storeId')
     async addFavoriteStore(@Param('userId') userId: number, @Param('storeId') storeId: number): Promise<boolean> {
-        return await this.bookmarkService.addFavoriteStore(userId, storeId);
+        const result = await this.bookmarkService.addFavoriteStore(userId, storeId);
+        return result;
     }
 
     @Get('/:userId')
@@ -15,12 +16,7 @@ export class BookmarkController {
         return this.bookmarkService.getManyFavoriteStores(userId);
     }
 
-    @Get('/:storeId')
-    async findOneStoreId(@Param('storeId') storeId: number) {
-        return await this.bookmarkService.findOneStoreId(storeId);
-    }
-
-    @Delete(':userId/stores/:storeId')
+    @Delete(':userId/:storeId')
     async removeFavoriteStore(@Param('userId') userId: number, @Param('storeId') storeId: number): Promise<boolean> {
         return await this.bookmarkService.deleteFavoriteStore(userId, storeId);
     }

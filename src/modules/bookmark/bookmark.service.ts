@@ -42,9 +42,9 @@ export class BookmarkService {
 
     async validateSavedFavoriteStore(userId: number, storeId: number) {
         const bookmark = await this.bookmarkRepository.getManyUserBookmark(userId);
-        if (bookmark.includes(storeId)) {
+        if (bookmark.indexOf(storeId)) {
             return true;
-        } else if (!bookmark.includes(storeId)) {
+        } else if (!bookmark.indexOf(storeId)) {
             throw new BadRequestException('즐겨찾기 된 매장이 아닙니다.');
         }
     }
