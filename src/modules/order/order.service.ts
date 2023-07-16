@@ -1,20 +1,19 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { OrderRepository } from './order.repository';
 import { Inject } from '@nestjs/common';
-import { CreateOrderDto } from './dto/create-order.dto';
-import { v4 as uuidv4 } from 'uuid';
+import { CreateOrderDto, OrderListDto } from './dto/create-order.dto';
+import { Order } from './entities/order.entity';
 
 @Injectable()
 export class OrderService {
     constructor(@Inject(OrderRepository) private orderRepository: OrderRepository) {}
 
-    async validateOrderInfo(menuList, storeId: number) {
-        if (menuList.length > 10) {
+    async validateOrderInfo(order: OrderListDto[], storeId: number) {
+        if (order.length > 10) {
             throw new BadRequestException('메뉴가 10개를 초과하였습니다');
         }
-        for (let i = 0; i < menuList.length; i++) {
-            const menu = await this.orderRepository.findMenuByMenuId(menuList[i], storeId);
-            console.log(menu);
+        for (const orderItem of order) {
+            const menu = await this.orderRepository.findMenuByMenuId(orderItem.menuId, storeId);
             if (!menu) {
                 throw new BadRequestException('존재하지 않는 메뉴입니다');
             }
@@ -23,17 +22,12 @@ export class OrderService {
     }
 
     async createOrder(storeId: number, body: CreateOrderDto) {
-        const { menuIds, userId } = body;
-        const validationResult = await this.validateOrderInfo(menuIds, storeId);
+        const { userId, orderList } = body;
+        const validationResult = await this.validateOrderInfo(orderList, storeId);
         if (!validationResult) {
             return validationResult;
         }
-
-        for (let i = 0; i < menuIds.length; i++) {
-            const orderId = uuidv4();
-            const menu = await this.orderRepository.findMenuByMenuId(menuIds[i], storeId);
-            await this.orderRepository.createOrder(userId, menu, orderId);
-        }
+        await this.orderRepository.createOrder(userId, storeId, orderList);
         return;
     }
 
@@ -71,14 +65,14 @@ export class OrderService {
 
     async getManyOrderHistory(nowDate: Date, userId: number) {
         const orderList = await this.orderRepository.getOrderByUserId(userId);
-
-        let confirmOrderList;
-        for (let i = 0; i < orderList.length; i++) {
-            const result = this.checkAfterThreeMonth(nowDate, orderList[i].createdAt);
+        const confirmOrderList: Order[] = [];
+        for (const order of orderList) {
+            const result = this.checkAfterThreeMonth(nowDate, order.createdAt);
             if (result === true) {
-                confirmOrderList.push(orderList[i]);
+                confirmOrderList.push(order);
             }
         }
+
         return confirmOrderList;
     }
 

@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Order } from './entities/order.entity';
 import { Repository } from 'typeorm';
 import { Menu } from '../menu/entities/menu.entity';
+import { OrderListDto } from './dto/create-order.dto';
 
 @Injectable()
 export class OrderRepository {
@@ -13,12 +14,11 @@ export class OrderRepository {
         private menuRepository: Repository<Menu>
     ) {}
 
-    async createOrder(userId: number, menu: Menu, orderId: number): Promise<Order> {
+    async createOrder(userId: number, storeId: number, orderList: OrderListDto[]): Promise<Order> {
         const order = this.orderRepository.create();
-        order.id = orderId;
         order.userId = userId;
-        order.storeId = menu.storeId;
-        order.food = JSON.stringify(menu);
+        order.storeId = storeId;
+        order.food = JSON.stringify(orderList);
         order.status = 'ACCEPT_ORDER';
         order.Review = null;
         order.createdAt = new Date();
