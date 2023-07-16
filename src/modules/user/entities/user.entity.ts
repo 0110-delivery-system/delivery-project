@@ -18,8 +18,8 @@ export class User {
     @Column('varchar', { name: 'name' })
     name: string;
 
-    @OneToMany(() => Delivery, (delivery) => delivery.User)
-    Delivery: Delivery[];
+    // @OneToMany(() => Delivery, (delivery) => delivery.User)
+    // Delivery: Delivery[];
 
     @OneToMany(() => Review, (review) => review.User)
     Review: Review;

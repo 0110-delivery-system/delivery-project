@@ -4,9 +4,10 @@ import { Order } from './entities/order.entity';
 import { Repository } from 'typeorm';
 import { Menu } from '../menu/entities/menu.entity';
 import { OrderListDto } from './dto/create-order.dto';
+import { IOrderRepository } from './order.IOrderRepository';
 
 @Injectable()
-export class OrderRepository {
+export class OrderRepository implements IOrderRepository {
     constructor(
         @InjectRepository(Order)
         private orderRepository: Repository<Order>,

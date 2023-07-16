@@ -1,29 +1,28 @@
+import { CreateDeliveryDto } from './dto/create-delivery.dto';
+import { IOrderRepository } from './../order/order.IOrderRepository';
 import { InjectRepository } from '@nestjs/typeorm';
 import { IDeliveryRepository } from './delivery.IDeliveryRepository';
 import { Injectable, BadRequestException, Inject } from '@nestjs/common';
 import { Repository } from 'typeorm';
-import { Order } from '../order/entities/order.entity';
 import { Delivery } from './entities/delivery.entity';
 
 @Injectable()
 export class DeliveryRepository implements IDeliveryRepository {
-    constructor(@InjectRepository(Delivery) private deliveryRepository: Repository<Delivery>) {}
+    constructor(@InjectRepository(Delivery) private deliveryRepository: Repository<Delivery>, @Inject(IOrderRepository) private orderRepository: IOrderRepository) {}
 
-    async createDelivery(orderId: number, deliveryInfo: any) {
-        // const order = await this.orderRepository.findOne({ where: { id: orderId } });
-        const order = 'a';
+    async createDelivery(orderId: number, deliveryInfo: CreateDeliveryDto) {
+        const order = await this.orderRepository.getOrderByOrderId(orderId);
         if (!order) {
-            throw new BadRequestException(`Order with ID ${orderId} not found`);
+            throw new BadRequestException(`존재 하지 않는 주문입니다.`);
         }
 
-        const { status, receiver, deliveryAddress } = deliveryInfo;
-
+        const { receiver, deliveryAddress, userId } = deliveryInfo;
         const delivery = this.deliveryRepository.create();
-        // delivery.Order = order;
-        delivery.status = status;
+        delivery.userId = userId;
+        delivery.status = 'WAIT_DELIVERY';
+        delivery.orderId = orderId;
         delivery.receiver = receiver;
         delivery.address = deliveryAddress;
-
         const createdDelivery = await this.deliveryRepository.save(delivery);
         return createdDelivery;
     }
@@ -57,7 +56,7 @@ export class DeliveryRepository implements IDeliveryRepository {
             deliveryId: delivery.id,
             receiver: delivery.receiver,
             deliveryAddress: delivery.address,
-            review: delivery.Review,
+
             // time: delivery.createdAt.toISOString(),
         };
 

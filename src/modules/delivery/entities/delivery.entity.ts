@@ -14,22 +14,12 @@ export class Delivery {
     @Column('varchar', { name: 'status' })
     status: string;
 
+    @Column('int', { name: 'orderId' })
+    orderId: number;
+
     @Column('varchar', { name: 'receiver' })
     receiver: string;
 
     @Column('varchar', { name: 'address' })
     address: string;
-
-    @ManyToOne(() => User, (user) => user.Delivery, {
-        onDelete: 'CASCADE',
-        onUpdate: 'CASCADE',
-    })
-    @JoinColumn([{ name: 'userId', referencedColumnName: 'id' }])
-    User: User;
-
-    @JoinColumn([{ name: 'OrderId', referencedColumnName: 'id' }])
-    Order: Order;
-
-    @OneToMany(() => Review, (review) => review.Delivery)
-    Review: Review[];
 }

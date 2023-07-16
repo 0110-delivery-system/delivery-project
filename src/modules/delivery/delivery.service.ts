@@ -1,21 +1,23 @@
 import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { IDeliveryRepository } from './delivery.IDeliveryRepository';
+import { CreateDeliveryDto } from './dto/create-delivery.dto';
 
 @Injectable()
 export class DeliveryService {
     constructor(@Inject(IDeliveryRepository) private deliveryRepository: IDeliveryRepository) {}
 
-    async validatecreateDelivery(deliveryInfo: { deliveryAddress: string; receiver: string }) {
-        if (!deliveryInfo.deliveryAddress) {
+    async validatecreateDelivery(deliveryInfo: CreateDeliveryDto) {
+        const { receiver, deliveryAddress } = deliveryInfo;
+        if (!deliveryAddress) {
             throw new BadRequestException('배달 주소지가 없습니다.');
         }
-        if (!deliveryInfo.receiver) {
+        if (!receiver) {
             throw new BadRequestException('수령인이 없습니다.');
         }
         return true;
     }
 
-    async createDelivery(orderId: number, deliveryInfo: any) {
+    async createDelivery(orderId: number, deliveryInfo: CreateDeliveryDto) {
         const validateResult = await this.validatecreateDelivery(deliveryInfo);
         if (validateResult) {
             const result = await this.deliveryRepository.createDelivery(orderId, deliveryInfo);

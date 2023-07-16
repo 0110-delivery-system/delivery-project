@@ -1,12 +1,12 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { OrderRepository } from './order.repository';
 import { Inject } from '@nestjs/common';
 import { CreateOrderDto, OrderListDto } from './dto/create-order.dto';
 import { Order } from './entities/order.entity';
+import { IOrderRepository } from './order.IOrderRepository';
 
 @Injectable()
 export class OrderService {
-    constructor(@Inject(OrderRepository) private orderRepository: OrderRepository) {}
+    constructor(@Inject(IOrderRepository) private orderRepository: IOrderRepository) {}
 
     async validateOrderInfo(order: OrderListDto[], storeId: number) {
         if (order.length > 10) {
