@@ -1,7 +1,9 @@
-import { Controller, Post, Body, Param, Query, Get, Put, Delete } from '@nestjs/common';
+import { Controller, Post, Body, Param, Query, Get, Put, Delete, UseGuards } from '@nestjs/common';
 import { MenuService } from './menu.service';
 import { CreateMenuDto } from './dto/create-menu.dto';
 import { UpdateMenuDto } from './dto/update-menu.dto';
+import { AuthGuard } from '@nestjs/passport';
+import { JwtAuthGuard } from '../auth/passport/guard/jwt-auth.guard';
 
 @Controller('menu')
 export class MenuController {
@@ -17,17 +19,18 @@ export class MenuController {
         return this.menuService.getManyMenu(storeId);
     }
 
+    @UseGuards(JwtAuthGuard)
     @Get()
     getMenu(@Query('storeId') storeId: number, @Query('menuId') menuId: number) {
         return this.menuService.getMenu(storeId, menuId);
     }
 
-    @Put('')
+    @Put()
     updateMenu(@Query('storeId') storeId: number, @Query('menuId') menuId: number, @Body() updateMenuDto: UpdateMenuDto) {
         return this.menuService.updateMenu(storeId, menuId, updateMenuDto);
     }
 
-    @Delete('')
+    @Delete()
     removeMenu(@Query('storeId') storeId: number, @Query('menuId') menuId: number) {
         return this.menuService.removeMenu(storeId, menuId);
     }
