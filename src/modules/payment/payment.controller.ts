@@ -6,7 +6,7 @@ import { UpdatePaymentDto } from './dto/update-payment.dto';
 @Controller('payment')
 export class PaymentController {
     constructor(private readonly paymentService: PaymentService) {}
-
+// test
     @Post()
     create(@Body() createPaymentDto: CreatePaymentDto) {
         return this.paymentService.create(createPaymentDto);
