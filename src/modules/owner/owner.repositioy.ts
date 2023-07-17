@@ -2,9 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Owner } from './entities/owner.entity';
+import { IOwnerRepository } from './owner.IRepository';
 
 @Injectable()
-export class OwnerRepository {
+export class OwnerRepository implements IOwnerRepository {
     constructor(
         @InjectRepository(Owner)
         private ownerRepository: Repository<Owner>
@@ -19,7 +20,6 @@ export class OwnerRepository {
         owner.email = email;
         owner.password = password;
         owner.name = name;
-
         await this.ownerRepository.save(owner);
     }
 }

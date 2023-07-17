@@ -4,10 +4,12 @@ import { OwnerController } from './owner.controller';
 import { OwnerRepository } from './owner.repositioy';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Owner } from './entities/owner.entity';
+import { IOwnerRepository } from './owner.IRepository';
 
 @Module({
     imports: [TypeOrmModule.forFeature([Owner])],
     controllers: [OwnerController],
-    providers: [OwnerService, OwnerRepository],
+    providers: [OwnerService, { provide: IOwnerRepository, useClass: OwnerRepository }],
+    exports: [IOwnerRepository],
 })
 export class OwnerModule {}

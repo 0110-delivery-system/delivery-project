@@ -6,10 +6,12 @@ import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from './passport/strategy/jwt.strategy';
 import { RefreshStrategy } from './passport/strategy/refresh.strategy';
+import { OwnerModule } from '../owner/owner.module';
 
 @Module({
     imports: [
         UserModule,
+        OwnerModule,
         PassportModule,
         JwtModule.registerAsync({
             useFactory: async () => ({

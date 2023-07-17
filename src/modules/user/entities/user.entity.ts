@@ -1,5 +1,4 @@
 import { Bookmark } from 'src/modules/bookmark/entities/bookmark.entity';
-import { Delivery } from 'src/modules/delivery/entities/delivery.entity';
 import { Order } from 'src/modules/order/entities/order.entity';
 import { Review } from 'src/modules/review/entities/review.entity';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
@@ -18,8 +17,8 @@ export class User {
     @Column('varchar', { name: 'name' })
     name: string;
 
-    // @OneToMany(() => Delivery, (delivery) => delivery.User)
-    // Delivery: Delivery[];
+    @Column('boolean', { name: 'owner' })
+    owner: boolean;
 
     @OneToMany(() => Review, (review) => review.User)
     Review: Review;

@@ -3,11 +3,14 @@ import { StoreService } from './store.service';
 import { Body } from '@nestjs/common';
 import { CreateStoreDto } from './dto/create-store.dto';
 import { BadRequestException } from '@nestjs/common';
+import { UseGuards } from '@nestjs/common';
+import { JwtAuthGuard } from '../auth/passport/guard/jwt-auth.guard';
 
 @Controller('store')
 export class StoreController {
     constructor(private readonly storeService: StoreService) {}
 
+    @UseGuards(JwtAuthGuard)
     @Post('createStore')
     async createStore(@Body() body: CreateStoreDto) {
         try {
@@ -18,6 +21,7 @@ export class StoreController {
         }
     }
 
+    @UseGuards(JwtAuthGuard)
     @Get('getManyStore')
     async getManyStore() {
         return await this.storeService.getManyStore();

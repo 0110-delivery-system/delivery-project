@@ -1,11 +1,11 @@
 import { BadRequestException, Inject, Injectable } from '@nestjs/common';
-import { OwnerRepository } from './owner.repositioy';
 import { isEmailValid, isNameValid, isPasswordValid } from './owner.helper';
 import { CreateOwnerDto } from './dto/create-owner.dto';
+import { IOwnerRepository } from './owner.IRepository';
 
 @Injectable()
 export class OwnerService {
-    constructor(@Inject(OwnerRepository) private ownerRepository: OwnerRepository) {}
+    constructor(@Inject(IOwnerRepository) private ownerRepository: IOwnerRepository) {}
     async getUserByEmail(email: string, withPassword?: boolean): Promise<any> {
         if (!isEmailValid(email)) throw new BadRequestException('이메일 형식이 올바르지 않습니다.');
         const foundOwner = await this.ownerRepository.findOneByEmail(email);
