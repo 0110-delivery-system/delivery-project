@@ -14,11 +14,13 @@ import { StoreModule } from './modules/store/store.module';
 import { DatabaseModule } from './database/database.module';
 import { UserModule } from './modules/user/user.module';
 import { ConfigModule } from '@nestjs/config';
+import { PassportModule } from '@nestjs/passport';
 
 @Module({
     imports: [
         DatabaseModule,
         PaymentModule,
+        PassportModule.register({ defaultStrategy: 'jwt' }),
         AuthModule,
         BookmarkModule,
         DeliveryModule,
