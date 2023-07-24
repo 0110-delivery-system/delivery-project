@@ -3,7 +3,7 @@ export interface IMenuRepository {
     getManyMenu(storeId: number);
     getMenu(storeId: number, menuId: number);
     updateMenu(menuId: number, newMenu: any);
-    deleteMenu(storeId: number, menuId: number);
+    deleteMenu(menuId: number);
 }
 
 export const IMenuRepository = Symbol('IMenuRepository');

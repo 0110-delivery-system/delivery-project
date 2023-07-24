@@ -1,21 +1,24 @@
-import { Controller, Post, Param, Body, Get } from '@nestjs/common';
+import { Controller, Post, Param, Body, Get, UseGuards } from '@nestjs/common';
 import { ReviewService } from './review.service';
-import { UpdatereviewDto } from './dto/update-review.dto';
+import { CreateReviewDto } from './dto/create-review.dto';
+import { JwtAuthGuard } from '../auth/passport/guard/jwt-auth.guard';
 
-@Controller('reviews')
+@Controller('review')
 export class ReviewController {
     constructor(private readonly reviewService: ReviewService) {}
 
+    @UseGuards(JwtAuthGuard)
     @Post(':userId/:orderId')
-    async createReview(@Param('userId') userId: number, @Param('orderId') orderId: number, @Body() review: any) {
+    async createReview(@Param('userId') userId: number, @Param('orderId') orderId: number, @Body() review: CreateReviewDto) {
         await this.reviewService.validateReview(userId, orderId, review);
-        const createdReview = await this.reviewService.createReview(orderId, userId, review);
+        const createdReview = await this.reviewService.createReview(userId, orderId, review);
         return createdReview;
     }
 
-    @Get(':userId/:orderId')
-    async getReview(@Param('userId') userId: number, @Param('orderId') orderId: number) {
-        const review = await this.reviewService.getReview(userId, orderId);
+    @UseGuards(JwtAuthGuard)
+    @Get(':reviewId')
+    async getReview(@Param('reviewId') reviewId: number) {
+        const review = await this.reviewService.getReview(reviewId);
         return review;
     }
 }

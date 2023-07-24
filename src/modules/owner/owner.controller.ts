@@ -1,9 +1,11 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Post, Body } from '@nestjs/common';
 import { OwnerService } from './owner.service';
-import { CreateOwnerDto } from './dto/create-owner.dto';
-import { UpdateOwnerDto } from './dto/update-owner.dto';
+import { CreateUserDto } from '../user/dto/create-user.dto';
 
 @Controller('owner')
 export class OwnerController {
     constructor(private readonly ownerService: OwnerService) {}
+
+    @Post()
+    async createOwner(@Body() body: CreateUserDto) {}
 }

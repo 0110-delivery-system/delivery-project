@@ -1,28 +1,26 @@
-import { Review } from 'src/modules/review/entities/review.entity';
-import { User } from 'src/modules/user/entities/user.entity';
-import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
-
+import { Column, Entity, PrimaryGeneratedColumn, ManyToOne, JoinColumn, OneToOne } from 'typeorm';
+import { Order } from 'src/modules/order/entities/order.entity';
 @Entity('Delivery')
 export class Delivery {
     @PrimaryGeneratedColumn({ type: 'int', name: 'id' })
     id: number;
 
-    @Column('int', { name: 'UserId' })
-    UserId: number;
+    @Column('int', { name: 'userId' })
+    userId: number;
 
     @Column('varchar', { name: 'status' })
     status: string;
 
+    @Column('int', { name: 'orderId' })
+    orderId: number;
+
+    @Column('varchar', { name: 'receiver' })
+    receiver: string;
+
     @Column('varchar', { name: 'address' })
     address: string;
 
-    @ManyToOne(() => User, (user) => user.Delivery, {
-        onDelete: 'CASCADE',
-        onUpdate: 'CASCADE',
-    })
-    @JoinColumn([{ name: 'UserId', referencedColumnName: 'id' }])
-    User: User;
-
-    @OneToMany(() => Review, (review) => review.Delivery)
-    Review: Review[];
+    @OneToOne(() => Order, (order) => order.Delivery)
+    @JoinColumn({ name: 'orderId', referencedColumnName: 'id' })
+    Order: Order;
 }
