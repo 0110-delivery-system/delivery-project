@@ -82,16 +82,16 @@ export class AuthService {
         let jwtSecretKey: string;
 
         if (type === 'access_token') {
-            jwtSecretKey = process.env.JWT_ACCESS_SECRET;
-            jwtExpireTime = process.env.JWT_ACCESS_TIME;
+            jwtSecretKey = 'process.env.JWT_ACCESS_SECRET';
+            jwtExpireTime = '6000';
 
             const access_token = this.jwtService.sign({ userId }, { secret: jwtSecretKey, expiresIn: jwtExpireTime });
             return access_token;
         }
 
         if (type === 'refresh_token') {
-            jwtSecretKey = process.env.JWT_REFRESH_SECRET;
-            jwtExpireTime = process.env.JWT_REFRESH_TIME;
+            jwtSecretKey = 'process.env.JWT_REFRESH_SECRET';
+            jwtExpireTime = '6000';
 
             const refresh_token = this.jwtService.sign({ userId }, { secret: jwtSecretKey, expiresIn: jwtExpireTime });
             return refresh_token;
