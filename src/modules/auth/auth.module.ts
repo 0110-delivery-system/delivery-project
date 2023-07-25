@@ -15,8 +15,8 @@ import { OwnerModule } from '../owner/owner.module';
         PassportModule,
         JwtModule.registerAsync({
             useFactory: async () => ({
-                secret: process.env.JWT_ACCESS_SECRET,
-                signOptions: { expiresIn: process.env.JWT_ACCESS_TIME },
+                secret: 'process.env.JWT_ACCESS_SECRET',
+                signOptions: { expiresIn: '6000' },
             }),
         }),
     ],
