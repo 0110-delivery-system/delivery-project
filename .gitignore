@@ -3,7 +3,7 @@
 /node_modules
 /data/mysql
 .env
-
+data
 # Logs
 logs
 *.log
