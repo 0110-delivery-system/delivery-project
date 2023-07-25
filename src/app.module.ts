@@ -13,11 +13,12 @@ import { ReviewModule } from './modules/review/review.module';
 import { StoreModule } from './modules/store/store.module';
 import { DatabaseModule } from './database/database.module';
 import { UserModule } from './modules/user/user.module';
-import { ConfigModule } from '@nestjs/config';
 import { PassportModule } from '@nestjs/passport';
+import { ConfigModule } from './config/config.module';
 
 @Module({
     imports: [
+        ConfigModule,
         DatabaseModule,
         PaymentModule,
         PassportModule.register({ defaultStrategy: 'jwt' }),
@@ -31,7 +32,6 @@ import { PassportModule } from '@nestjs/passport';
         ReviewModule,
         StoreModule,
         UserModule,
-        ConfigModule.forRoot({ isGlobal: true }),
     ],
     controllers: [AppController],
     providers: [AppService],
